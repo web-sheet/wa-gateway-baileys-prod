@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Websheet Gateway</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <style>
+      body {
+        background:
+          radial-gradient(circle at top left, #25d36620, transparent 25%),
+          radial-gradient(circle at bottom right, #10b98115, transparent 25%),
+          #0f172a;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen text-white overflow-x-hidden text-sm">
+    <!-- Navbar -->
+    <header
+      class="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl"
+    >
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
+      >
+        <!-- Logo -->
+        <div>
+          <h1 class="text-xl font-bold">Websheet Gateway</h1>
+
+          <p class="text-slate-400 text-xs">WhatsApp API Platform</p>
+        </div>
+
+        <!-- Menu -->
+        <div class="hidden md:flex items-center gap-2">
+          <a
+            href="#features"
+            class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium text-sm"
+          >
+            Features
+          </a>
+
+          <a
+            href="#api"
+            class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium text-sm"
+          >
+            API
+          </a>
+
+          <a
+            href="/documentation"
+            class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium text-sm"
+          >
+            Documentation
+          </a>
+
+          <a
+            href="#contact"
+            class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium text-sm"
+          >
+            Contact
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="max-w-7xl mx-auto px-6 pt-14 pb-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Left -->
+        <div>
+          <!-- Badge -->
+          <div
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5"
+          >
+            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+
+            v1.2.0 — Bot Webhook Enabled
+          </div>
+
+          <!-- Title -->
+          <h1 class="text-4xl lg:text-5xl font-black leading-tight">
+            WebSheet Gateway untuk
+            <span class="text-emerald-400"> Automation </span>
+            & API
+          </h1>
+
+          <!-- Desc -->
+          <p class="text-slate-400 text-base leading-relaxed mt-5 max-w-2xl">
+            Sistem WhatsApp Gateway untuk automation, chatbot, broadcast, dan
+            integrasi aplikasi bisnis.
+          </p>
+
+          <!-- Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 mt-8">
+            <a
+              href="/documentation"
+              class="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 transition font-semibold shadow-lg shadow-emerald-500/20 text-center text-sm"
+            >
+              <i class="fa-solid fa-book mr-2"></i>
+              Dokumentasi
+            </a>
+
+            <a
+              href="#login"
+              class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition font-semibold border border-white/10 text-center text-sm"
+            >
+              <i class="fa-solid fa-right-to-bracket mr-2"></i>
+              Login Dashboard
+            </a>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <p class="text-slate-400 text-xs">REST API</p>
+
+              <h3 class="text-xl font-bold mt-2">Ready</h3>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <p class="text-slate-400 text-xs">Queue Delay</p>
+
+              <h3 class="text-xl font-bold mt-2">4s</h3>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <p class="text-slate-400 text-xs">Webhook</p>
+
+              <h3 class="text-xl font-bold mt-2">Active</h3>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <p class="text-slate-400 text-xs">Media</p>
+
+              <h3 class="text-xl font-bold mt-2">Multi</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Login -->
+        <div id="login">
+          <div
+            class="bg-white/5 border border-white/10 rounded-3xl p-7 backdrop-blur-xl shadow-2xl"
+          >
+            <div class="mb-7">
+              <h2 class="text-2xl font-bold">Login Dashboard</h2>
+
+              <p class="text-slate-400 mt-2 text-sm">
+                Masuk untuk mengelola WhatsApp Gateway Anda
+              </p>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" class="space-y-5">
+              <!-- Username -->
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">
+                  Username
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  ></i>
+
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Masukkan username"
+                    required
+                    class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition text-sm"
+                  />
+                </div>
+              </div>
+
+              <!-- Password -->
+              <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">
+                  Password
+                </label>
+
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  ></i>
+
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Masukkan password"
+                    required
+                    class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/10 border border-white/10 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition text-sm"
+                  />
+                </div>
+              </div>
+
+              <!-- Button -->
+              <button
+                type="submit"
+                class="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 transition font-bold shadow-lg shadow-emerald-500/20 text-sm"
+              >
+                <i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>
+                Login Sekarang
+              </button>
+            </form>
+
+            <!-- Bottom -->
+            <div class="mt-7 pt-5 border-t border-white/10 text-center">
+              <p class="text-xs text-slate-400">
+                REST API • Webhook • Queue System • Broadcast
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="max-w-7xl mx-auto px-6 py-10">
+      <!-- Title -->
+      <div class="mb-10 text-center">
+        <h2 class="text-3xl font-black">Fitur Unggulan</h2>
+
+        <p class="text-slate-400 mt-3 max-w-2xl mx-auto text-sm">
+          Dibangun untuk automation, chatbot, ERP, CRM, Google Sheet, AppSheet,
+          dan integrasi WhatsApp skala bisnis.
+        </p>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <!-- Card -->
+        <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-lg text-emerald-400 mb-5"
+          >
+            <i class="fa-solid fa-paper-plane"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Send Text API</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Kirim pesan WhatsApp ke nomor pribadi maupun grup menggunakan REST
+            API JSON sederhana.
+          </p>
+        </div>
+
+        <!-- Card -->
+        <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-lg text-indigo-400 mb-5"
+          >
+            <i class="fa-solid fa-image"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Image Broadcast</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Mendukung multi image broadcast dengan caption dari URL publik dan
+            cloud storage (google drive, appsheet, dll).
+          </p>
+        </div>
+
+        <!-- Card -->
+        <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-lg text-red-400 mb-5"
+          >
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Document API</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Kirim PDF, Excel, Word, dan dokumen lainnya langsung ke WhatsApp.
+          </p>
+        </div>
+
+        <!-- Card -->
+        <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-lg text-yellow-400 mb-5"
+          >
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Queue System</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Sistem antrian otomatis dengan delay aman untuk menjaga kualitas
+            nomor WhatsApp.
+          </p>
+        </div>
+
+        <!-- Card -->
+        <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-lg text-cyan-400 mb-5"
+          >
+            <i class="fa-solid fa-webhook"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Webhook Bot</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Terima pesan masuk realtime ke server Anda menggunakan webhook JSON
+            otomatis.
+          </p>
+        </div>
+
+        <!-- Card -->
+        <!-- <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-lg text-purple-400 mb-5"
+          >
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Dashboard Realtime</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Monitoring QR login, status WhatsApp, webhook, dan pengiriman pesan
+            realtime.
+          </p>
+        </div> -->
+
+        <!-- Card -->
+        <div
+          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl"
+        >
+          <div
+            class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-lg text-blue-400 mb-5"
+          >
+            <i class="fa-solid fa-server"></i>
+          </div>
+
+          <h3 class="text-xl font-bold mb-3">Stable Server</h3>
+
+          <p class="text-slate-400 leading-relaxed text-sm">
+            Infrastruktur server stabil dengan sistem monitoring realtime untuk
+            menjaga koneksi WhatsApp tetap online dan responsif.
+          </p>
+        </div>
+      </div>
+    </section>
+
+      <!-- API Preview -->
+    <section id="api"
+             class="max-w-7xl mx-auto px-6 py-14">
+
+      <div class="bg-white/5 border border-white/10 rounded-[32px] p-8 lg:p-12 backdrop-blur-xl shadow-2xl overflow-hidden">
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+
+          <!-- Left -->
+          <div>
+
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold mb-6">
+
+              REST API EXAMPLE
+
+            </div>
+
+            <h2 class="text-4xl font-black leading-tight">
+              Integrasi Mudah
+              dengan JSON API
+            </h2>
+
+            <p class="text-slate-400 mt-5 leading-relaxed">
+
+              Gunakan endpoint sederhana untuk mengirim pesan otomatis
+              dari aplikasi Anda hanya dengan beberapa baris kode.
+
+            </p>
+
+          </div>
+
+          <!-- Code -->
+          <div>
+
+<pre class="bg-black/40 border border-white/10 rounded-3xl p-6 overflow-x-auto text-sm text-slate-300"><code>POST /send
+
+{
+  "number": "628123456789",
+  "message": "Halo dari Websheet Gateway 🚀"
+}</code></pre>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Contact / Developer -->
+    <section class="max-w-7xl mx-auto px-6 py-14" id="contact">
+      <div
+        class="bg-white/5 border border-white/10 rounded-[32px] p-8 lg:p-12 backdrop-blur-xl shadow-2xl"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <!-- Left -->
+          <div class="lg:col-span-2">
+            <!-- Badge -->
+            <div
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5"
+            >
+              <i class="fa-solid fa-user-gear"></i>
+
+              DEVELOPER PROFILE
+            </div>
+
+            <!-- Title -->
+            <h2 class="text-3xl font-black">Lutfi Ramdani</h2>
+
+            <p class="text-slate-400 mt-5 leading-relaxed text-sm">
+              Seseorang yang tertarik pada dunia teknologi,
+              khususnya web programming, automation system, dan integrasi
+              digital. Memanfaatkan waktu luang untuk membangun berbagai
+              aplikasi berbasis web, dashboard realtime, WhatsApp Gateway,
+              automation workflow, serta sistem integrasi bisnis modern.
+            </p>
+
+            <p class="text-slate-400 mt-5 leading-relaxed text-sm">
+              Berpengalaman mengerjakan project menggunakan HTML, CSS (Bootstrap
+              & Tailwind CSS), JavaScript, Alpine JS, dan Vue Js di sisi
+              frontend, serta Node.js (Express.js, Ejs) dan PHP (Laravel) di
+              sisi backend. Menggunakan MySQL dan MongoDB sebagai database utama
+              dalam berbagai kebutuhan aplikasi.
+            </p>
+
+            <p class="text-slate-400 mt-5 leading-relaxed text-sm">
+              Selain pengembangan web, juga pernah membangun aplikasi mobile
+              menggunakan AppSheet serta automation berbasis Google Sheets
+              dengan memanfaatkan Google Apps Script (GAS) untuk kebutuhan
+              bisnis dan operasional.
+            </p>
+          </div>
+
+          <!-- Right -->
+          <div>
+            <div class="bg-black/20 border border-white/10 rounded-3xl p-6">
+              <h3 class="text-xl font-bold mb-6">Contact</h3>
+
+              <div class="space-y-5">
+                <!-- WhatsApp -->
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0"
+                  >
+                    <i class="fa-brands fa-whatsapp"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-slate-400 text-xs mb-1">WhatsApp</p>
+
+                    <a
+                      href="https://wa.me/62895415163173"
+                      target="_blank"
+                      class="font-semibold hover:text-emerald-400 transition"
+                    >
+                      0895-4151-63173
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Instagram -->
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-400 shrink-0"
+                  >
+                    <i class="fa-brands fa-instagram"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-slate-400 text-xs mb-1">Instagram</p>
+
+                    <a
+                      href="https://instagram.com/amir.achaziaa"
+                      target="_blank"
+                      class="font-semibold hover:text-pink-400 transition"
+                    >
+                      @amir.achaziaa
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-11 h-11 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 shrink-0"
+                  >
+                    <i class="fa-solid fa-envelope"></i>
+                  </div>
+
+                  <div>
+                    <p class="text-slate-400 text-xs mb-1">Email</p>
+
+                    <a
+                      href="mailto:websheetweb@gmail.com"
+                      class="font-semibold hover:text-cyan-400 transition break-all"
+                    >
+                      websheetweb@gmail.com
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom -->
+              <div class="mt-8 pt-6 border-t border-white/10">
+                <div class="flex items-center gap-3 text-slate-400 text-xs">
+                  <i class="fa-solid fa-code"></i>
+
+                  Fullstack Web Developer
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-black/20 backdrop-blur-xl mt-20">
+      <div class="max-w-7xl mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <!-- Brand -->
+          <div>
+            <h2 class="text-xl font-bold">Websheet Gateway</h2>
+
+            <p class="text-slate-400 text-sm leading-relaxed mt-4">
+              Platform WhatsApp Gateway modern untuk automation, REST API,
+              webhook bot, broadcast message, dan dashboard realtime.
+            </p>
+          </div>
+
+          <!-- Navigation -->
+          <div>
+            <h3 class="font-semibold text-white mb-4">Navigation</h3>
+
+            <div class="space-y-3 text-sm">
+              <a
+                href="/"
+                class="block text-slate-400 hover:text-white transition"
+              >
+                Home
+              </a>
+
+              <a
+                href="/documentation"
+                class="block text-slate-400 hover:text-white transition"
+              >
+                Documentation
+              </a>
+
+              <!-- <a
+                href="/about"
+                class="block text-slate-400 hover:text-white transition"
+              >
+                About
+              </a>
+
+              <a
+                href="/contact"
+                class="block text-slate-400 hover:text-white transition"
+              >
+                Contact
+              </a> -->
+            </div>
+          </div>
+
+          <!-- Features -->
+          <div>
+            <h3 class="font-semibold text-white mb-4">Features</h3>
+
+            <div class="space-y-3 text-sm text-slate-400">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                REST API
+              </div>
+
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                Webhook Bot
+              </div>
+
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                Queue System
+              </div>
+
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                Multi Media Broadcast
+              </div>
+
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                Stable Server
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div>
+            <h3 class="font-semibold text-white mb-4">Contact</h3>
+
+            <div class="space-y-4 text-sm">
+              <!-- WA -->
+              <a
+                href="https://wa.me/62895415163173"
+                target="_blank"
+                class="flex items-center gap-3 text-slate-400 hover:text-emerald-400 transition"
+              >
+                <i class="fa-brands fa-whatsapp"></i>
+
+                0895-4151-63173
+              </a>
+
+              <!-- IG -->
+              <a
+                href="https://instagram.com/amir.achaziaa"
+                target="_blank"
+                class="flex items-center gap-3 text-slate-400 hover:text-pink-400 transition"
+              >
+                <i class="fa-brands fa-instagram"></i>
+
+                @amir.achaziaa
+              </a>
+
+              <!-- Email -->
+              <a
+                href="mailto:websheetweb@gmail.com"
+                class="flex items-center gap-3 text-slate-400 hover:text-cyan-400 transition break-all"
+              >
+                <i class="fa-solid fa-envelope"></i>
+
+                websheetweb@gmail.com
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom -->
+        <div
+          class="border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"
+        >
+          <p class="text-slate-500 text-sm text-center md:text-left">
+            © 2024 - <%= new Date().getFullYear() %> Websheet Gateway. All rights
+            reserved.
+          </p>
+
+          <div class="flex items-center gap-5 text-sm">
+            <span class="flex items-center gap-2 text-slate-500">
+              <i class="fa-solid fa-server text-emerald-400"></i>
+
+              Stable Server
+            </span>
+
+            <span class="flex items-center gap-2 text-slate-500">
+              <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+
+              Secure API
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation - Websheet Gateway</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body {
+        background:
+          radial-gradient(circle at top left, #25d36615, transparent 25%),
+          radial-gradient(circle at bottom right, #10b98115, transparent 25%),
+          #0f172a;
+      }
+
+      pre {
+        overflow-x: auto;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen text-white">
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl">
+
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        <!-- Left -->
+        <div class="flex items-center gap-10">
+
+          <!-- Logo -->
+          <div>
+            <h1 class="text-2xl font-bold">
+              WebSheet Gateway
+            </h1>
+
+            <p class="text-slate-400 text-sm">
+              API Documentation
+            </p>
+          </div>
+
+          <!-- Menu -->
+          <nav class="hidden md:flex items-center gap-2">
+
+            <a href="/about"
+               class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium">
+              About
+            </a>
+
+            <a href="/documentation"
+               class="px-4 py-2 rounded-xl bg-white/10 text-white transition font-medium">
+              Documentation
+            </a>
+
+            <a href="/contact"
+               class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium">
+              Contact
+            </a>
+
+          </nav>
+
+        </div>
+
+        <!-- Right -->
+        <div class="flex items-center gap-4">
+
+          <a href="/dashboard"
+             class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 transition font-medium shadow-lg shadow-emerald-500/20">
+
+            Dashboard
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- Layout -->
+    <div class="max-w-7xl mx-auto px-6 py-8 flex gap-8">
+
+      <!-- Sidebar -->
+      <aside class="hidden lg:block w-72 shrink-0">
+
+        <div class="sticky top-28 bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-xl">
+
+          <div class="mb-8">
+
+            <h2 class="text-lg font-bold">
+              API Reference
+            </h2>
+
+            <p class="text-slate-400 text-sm mt-1">
+              WhatsApp Gateway v1.0
+            </p>
+
+          </div>
+
+          <nav class="space-y-2 text-sm">
+
+            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-3">
+              Authentication
+            </p>
+
+            <a href="#auth"
+               class="block px-4 py-3 rounded-2xl hover:bg-white/10 transition text-slate-300 hover:text-white">
+              API Headers
+            </a>
+
+            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mt-8 mb-3">
+              Endpoints
+            </p>
+
+            <a href="#send-text"
+               class="block px-4 py-3 rounded-2xl hover:bg-white/10 transition text-slate-300 hover:text-white">
+              ✉️ Kirim Teks
+            </a>
+
+            <a href="#send-image"
+               class="block px-4 py-3 rounded-2xl hover:bg-white/10 transition text-slate-300 hover:text-white">
+              🖼️ Kirim Gambar
+            </a>
+
+            <a href="#send-doc"
+               class="block px-4 py-3 rounded-2xl hover:bg-white/10 transition text-slate-300 hover:text-white">
+              📄 Kirim Dokumen
+            </a>
+
+          </nav>
+
+        </div>
+
+      </aside>
+
+      <!-- Content -->
+      <main class="flex-1 min-w-0">
+
+        <!-- Hero -->
+        <section class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl mb-8">
+
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+
+            <div>
+
+              <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold mb-5">
+
+                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+
+                REST API READY
+
+              </div>
+
+              <h1 class="text-4xl font-black leading-tight">
+
+                Dokumentasi API
+                WhatsApp Gateway
+
+              </h1>
+
+              <p class="text-slate-400 mt-4 max-w-3xl leading-relaxed">
+
+                Integrasikan WhatsApp Gateway Anda dengan mudah menggunakan REST API.
+                Mendukung pengiriman pesan teks, gambar, dokumen, webhook realtime,
+                serta queue system otomatis untuk menjaga keamanan nomor WhatsApp.
+
+              </p>
+
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4 w-full lg:w-auto">
+
+              <div class="bg-white/5 border border-white/10 rounded-2xl p-5 min-w-[140px]">
+
+                <p class="text-slate-400 text-sm">
+                  Version
+                </p>
+
+                <h3 class="text-2xl font-bold mt-2">
+                  v1.0
+                </h3>
+
+              </div>
+
+              <div class="bg-white/5 border border-white/10 rounded-2xl p-5 min-w-[140px]">
+
+                <p class="text-slate-400 text-sm">
+                  Delay Queue
+                </p>
+
+                <h3 class="text-2xl font-bold mt-2">
+                  4s
+                </h3>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- Authentication -->
+        <section id="auth"
+                 class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl mb-8 scroll-mt-28">
+
+          <div class="mb-6">
+
+            <h2 class="text-2xl font-bold">
+              Authentication
+            </h2>
+
+            <p class="text-slate-400 mt-2">
+              Semua request API wajib menyertakan API Key pada header request.
+            </p>
+
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-auto rounded-2xl border border-white/10">
+
+            <table class="w-full">
+
+              <thead class="bg-white/5">
+
+                <tr class="text-left">
+
+                  <th class="px-6 py-4 text-slate-300 font-semibold">
+                    Header
+                  </th>
+
+                  <th class="px-6 py-4 text-slate-300 font-semibold">
+                    Type
+                  </th>
+
+                  <th class="px-6 py-4 text-slate-300 font-semibold">
+                    Description
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                <tr class="border-t border-white/10">
+
+                  <td class="px-6 py-4">
+                    <code class="text-emerald-400 font-bold">
+                      Content-Type
+                    </code>
+                  </td>
+
+                  <td class="px-6 py-4 text-slate-400">
+                    String
+                  </td>
+
+                  <td class="px-6 py-4 text-slate-300">
+                    application/json
+                  </td>
+
+                </tr>
+
+                <tr class="border-t border-white/10">
+
+                  <td class="px-6 py-4">
+                    <code class="text-emerald-400 font-bold">
+                      x-api-key
+                    </code>
+                  </td>
+
+                  <td class="px-6 py-4 text-slate-400">
+                    String
+                  </td>
+
+                  <td class="px-6 py-4 text-slate-300">
+                    API Key unik milik akun Anda
+                  </td>
+
+                </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </section>
+
+        <!-- SEND TEXT -->
+        <section id="send-text"
+                 class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl mb-8 scroll-mt-28">
+
+          <!-- Header -->
+          <div class="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+
+            <span class="px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold w-fit">
+
+              POST
+
+            </span>
+
+            <h2 class="text-2xl font-black font-mono">
+              /send
+            </h2>
+
+          </div>
+
+          <p class="text-slate-400 leading-relaxed mb-6">
+
+            Digunakan untuk mengirim pesan teks ke nomor pribadi maupun grup WhatsApp.
+            Mendukung single target dan multi target sekaligus.
+
+          </p>
+
+          <!-- Request -->
+          <div class="mb-6">
+
+            <h3 class="text-sm uppercase tracking-widest text-slate-500 font-bold mb-3">
+              Request Body
+            </h3>
+
+            <pre class="bg-black/40 border border-white/10 rounded-2xl p-5 text-sm text-slate-300"><code>{
+  "number": "628123456789",
+  "message": "Halo, ini contoh pesan teks otomatis."
+}</code></pre>
+
+          </div>
+
+          <!-- Response -->
+          <div>
+
+            <h3 class="text-sm uppercase tracking-widest text-slate-500 font-bold mb-3">
+              Success Response
+            </h3>
+
+            <pre class="bg-black/40 border border-white/10 rounded-2xl p-5 text-sm text-emerald-400"><code>{
+  "success": true,
+  "message": "Pesan berhasil dimasukkan ke antrian",
+  "targets": ["628123456789@s.whatsapp.net"],
+  "queueRemaining": 1
+}</code></pre>
+
+          </div>
+
+        </section>
+
+        <!-- SEND IMAGE -->
+        <section id="send-image"
+                 class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl mb-8 scroll-mt-28">
+
+          <!-- Header -->
+          <div class="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+
+            <span class="px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold w-fit">
+
+              POST
+
+            </span>
+
+            <h2 class="text-2xl font-black font-mono">
+              /send-image
+            </h2>
+
+          </div>
+
+          <p class="text-slate-400 leading-relaxed mb-6">
+
+            Mengirim gambar dengan caption. Mendukung multiple image broadcast,
+            AppSheet URL, dan Google Drive direct link.
+
+          </p>
+
+          <!-- Request -->
+          <div class="mb-6">
+
+            <h3 class="text-sm uppercase tracking-widest text-slate-500 font-bold mb-3">
+              Request Body
+            </h3>
+
+            <pre class="bg-black/40 border border-white/10 rounded-2xl p-5 text-sm text-slate-300"><code>{
+  "number": ["628123456789"],
+  "images": [
+    {
+      "url": "https://domain.com/image.jpg",
+      "caption": "Foto Produk"
+    }
+  ]
+}</code></pre>
+
+          </div>
+
+          <!-- Info -->
+          <div class="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5 text-sm text-blue-300 leading-relaxed">
+
+            ℹ️ Pastikan file gambar dapat diakses publik dan tidak membutuhkan login.
+            Untuk Google Drive gunakan format direct link.
+
+          </div>
+
+        </section>
+
+        <!-- SEND DOC -->
+        <section id="send-doc"
+                 class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl mb-20 scroll-mt-28">
+
+          <!-- Header -->
+          <div class="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+
+            <span class="px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold w-fit">
+
+              POST
+
+            </span>
+
+            <h2 class="text-2xl font-black font-mono">
+              /send-document
+            </h2>
+
+          </div>
+
+          <p class="text-slate-400 leading-relaxed mb-6">
+
+            Digunakan untuk mengirim file dokumen seperti PDF, Excel, Word,
+            maupun file lainnya ke nomor WhatsApp maupun grup.
+
+          </p>
+
+          <!-- Request -->
+          <div class="mb-6">
+
+            <h3 class="text-sm uppercase tracking-widest text-slate-500 font-bold mb-3">
+              Request Body
+            </h3>
+
+            <pre class="bg-black/40 border border-white/10 rounded-2xl p-5 text-sm text-slate-300"><code>{
+  "number": "628123456789",
+  "documentUrl": "https://domain.com/file.pdf",
+  "fileName": "invoice.pdf",
+  "caption": "Silakan unduh file berikut"
+}</code></pre>
+
+          </div>
+
+          <!-- Warning -->
+          <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 text-sm text-red-300 leading-relaxed">
+
+            ⚠️ Maksimal ukuran file dokumen adalah 10 MB agar queue server tetap stabil.
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </body>
+</html>

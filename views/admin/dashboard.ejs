@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Favicon -->
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/733/733585.png">
+
+  <style>
+    body {
+      background:
+        radial-gradient(circle at top left, #25d36615, transparent 25%),
+        radial-gradient(circle at bottom right, #10b98115, transparent 25%),
+        #0f172a;
+    }
+    @keyframes pulse-green {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.5; }
+    }
+    .animate-pulse-green {
+      animation: pulse-green 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen text-white">
+
+ <%- include('../partials/navbar') %>
+
+  <main class="max-w-7xl mx-auto p-6">
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-3xl font-bold">Kelola User</h2>
+        <p class="text-slate-400 mt-1">Manajemen akun pengguna aplikasi WhatsApp Gateway</p>
+      </div>
+
+      <a href="/register"
+         class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 transition font-semibold shadow-lg shadow-emerald-500/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Tambah User
+      </a>
+    </div>
+
+    <div class="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-2xl">
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-white/5 border-b border-white/10">
+            <tr class="text-left text-slate-300 text-sm uppercase tracking-wider">
+              <th class="px-6 py-4">Username</th>
+              <th class="px-6 py-4">Role</th>
+              <th class="px-6 py-4">Status WA</th>
+              <th class="px-6 py-4">Webhook Terpasang</th>
+              <th class="px-6 py-4">Dibuat</th>
+              <th class="px-6 py-4 text-center">Aksi</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% users.forEach(u => { %>
+              <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">
+                      <%= u.username.charAt(0).toUpperCase() %>
+                    </div>
+                    <div>
+                      <p class="font-semibold text-white"><%= u.username %></p>
+                      <p class="text-sm text-slate-400">ID: <%= u._id %></p>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4">
+                  <% if(u.role === 'admin') { %>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
+                      ADMIN
+                    </span>
+                  <% } else { %>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-500/20 text-slate-300 border border-slate-500/20">
+                      USER
+                    </span>
+                  <% } %>
+                </td>
+
+                <td class="px-6 py-4">
+                  <% if(u.isOnline) { %>
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
+                      <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-green"></span>
+                      CONNECTED
+                    </span>
+                  <% } else { %>
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                      <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                      DISCONNECTED
+                    </span>
+                  <% } %>
+                </td>
+
+                <td class="px-6 py-4 max-w-xs">
+                  <div class="space-y-1 text-xs">
+                    <% if(u.webhookUrl) { %>
+                      <p class="text-slate-300 truncate" title="<%= u.webhookUrl %>">
+                        <span class="text-emerald-400 font-medium">Main:</span> <%= u.webhookUrl %>
+                      </p>
+                    <% } %>
+                    
+                    <% if(u.webhookBotUrl) { %>
+                      <p class="text-slate-300 truncate" title="<%= u.webhookBotUrl %>">
+                        <span class="text-blue-400 font-medium">Bot:</span> <%= u.webhookBotUrl %>
+                      </p>
+                    <% } %>
+
+                    <% if(!u.webhookUrl && !u.webhookBotUrl) { %>
+                      <span class="text-slate-500 italic">Belum disetting</span>
+                    <% } %>
+                  </div>
+                </td>
+
+                <td class="px-6 py-4 text-slate-300 text-sm">
+                  <%= u.createdAt.toLocaleString() %>
+                </td>
+
+                <td class="px-6 py-4">
+                  <div class="flex items-center justify-center">
+                    <a href="/admin/delete/<%= u._id %>"
+                       onclick="return confirm('Hapus user ini?')"
+                       class="px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 transition text-sm font-semibold">
+                      Hapus
+                    </a>
+                  </div>
+                </td>
+
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if(users.length === 0) { %>
+        <div class="text-center py-16">
+          <div class="w-20 h-20 mx-auto rounded-2xl bg-white/5 flex items-center justify-center mb-5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold">Belum ada user</h3>
+          <p class="text-slate-400 mt-2">Tambahkan user baru untuk mulai menggunakan sistem</p>
+        </div>
+      <% } %>
+
+    </div>
+  </main>
+
+</body>
+</html>

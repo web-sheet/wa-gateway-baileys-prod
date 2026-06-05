@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dokumentasi API WebSheet Gateway</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      pre {
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        font-family: "Courier New", Courier, monospace;
+      }
+      .method-post {
+        background-color: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+      }
+      .method-webhook {
+        background-color: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+      }
+    </style>
+  </head>
+ 
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <div class="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-50">
+    <h1 class="text-lg font-bold text-emerald-600 flex items-center gap-2">
+      <span>🟢</span> WS Gateway
+    </h1>
+    <button id="hamburgerBtn" class="p-2 rounded-md hover:bg-gray-100 text-gray-600 focus:outline-none">
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+
+  <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"></div>
+
+  <div class="flex min-h-screen">
+    
+    <aside
+      id="sidebarMenu"
+      class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 p-6 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col justify-between shrink-0 hidden"
+    >
+      <div>
+        <div class="mb-8 flex items-center justify-between">
+          <div>
+            <h1 class="text-xl font-bold text-emerald-600 flex items-center gap-2">
+              <span>🟢</span> WS Gateway
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">v1.2.0 (Bot Webhook Enabled)</p>
+          </div>
+          <button id="closeSidebarBtn" class="md:hidden p-1 text-gray-400 hover:text-gray-600 focus:outline-none">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <nav class="space-y-2">
+          <a
+            href="/dashboard"
+            class="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition font-medium border border-slate-200 shadow-xs mb-6"
+          >
+            ⬅️ Back to Dashboard
+          </a>
+
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            Authentication
+          </p>
+          <a href="#auth" class="mobile-link block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md">API Headers</a>
+
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">
+            Outbound Endpoints
+          </p>
+          <a href="#send-text" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium">✉️ Kirim Teks</a>
+          <a href="#send-image" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium">🖼️ Kirim Gambar</a>
+          <a href="#send-doc" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium">📄 Kirim Dokumen</a>
+
+          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">
+            Inbound Integration
+          </p>
+          <a href="#webhook-receive" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md font-medium">📥 Terima Pesan (Webhook)</a>
+        </nav>
+      </div>
+    </aside>
+
+      <main class="flex-1 p-6 md:p-12 overflow-y-auto">
+        <section class="mb-12 border-b border-gray-200 pb-6">
+          <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">
+            Dokumentasi Integrasi API
+          </h2>
+          <p class="mt-2 text-base text-gray-600">
+            Selamat datang di dokumentasi API WebSheet Gateway. Seluruh
+            pengiriman pesan via API di bawah ini menggunakan
+            <b>Sistem Antrian Otomatis (Queue System)</b> berbasis RAM per-user
+            dengan jeda aman 4 detik untuk menjaga reputasi nomor Anda.
+          </p>
+        </section>
+
+        <section id="auth" class="mb-12 scroll-mt-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-3">
+            Autentikasi & Header Wajib
+          </h3>
+          <p class="text-sm text-gray-600 mb-4">
+            Setiap <i>request</i> ke server wajib menyertakan API Key Anda di
+            dalam komponen Header:
+          </p>
+          <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-xs">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-gray-200 text-gray-500">
+                  <th class="pb-2">Key Header</th>
+                  <th class="pb-2">Tipe</th>
+                  <th class="pb-2">Deskripsi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="py-2 font-mono text-red-600 font-bold">
+                    Content-Type
+                  </td>
+                  <td class="py-2 text-gray-500">String</td>
+                  <td class="py-2">
+                    Wajib diisi
+                    <code class="bg-gray-100 px-1 rounded text-xs"
+                      >application/json</code
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-2 font-mono text-red-600 font-bold">
+                    x-api-key
+                  </td>
+                  <td class="py-2 text-gray-500">String</td>
+                  <td class="py-2">API Key unik milik akun Anda</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <hr class="border-gray-200 my-10" />
+
+        <section id="send-text" class="mb-16 scroll-mt-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wide tracking-wider"
+              >POST</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">/send</h3>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">
+            Digunakan untuk mengirim satu atau banyak pesan teks sekaligus ke
+            nomor pribadi maupun ID Grup.
+          </p>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+          >
+            Request Body (JSON)
+          </h4>
+          <pre><code>{
+  "number": "628123456789", // Bisa berupa String tunggal, atau Array: ["628123", "628567"]
+  "message": "Halo, ini contoh pesan teks otomatis."
+}</code></pre>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2"
+          >
+            Response Sukses (200 OK)
+          </h4>
+          <pre><code class="text-emerald-400">{
+  "success": true,
+  "message": "1 pesan berhasil dimasukkan ke antrian.",
+  "targets": ["628123456789@s.whatsapp.net"],
+  "queueRemaining": 1
+}</code></pre>
+        </section>
+
+        <section id="send-image" class="mb-16 scroll-mt-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wide tracking-wider"
+              >POST</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">
+              /send-image
+            </h3>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">
+            Digunakan untuk mengirim media gambar beserta caption-nya dalam
+            format array fleksibel (Multi-Image Broadcast). Mendukung tautan
+            gambar publik umum, **AppSheet Image URL**, serta **Google Drive
+            (Direct Link)**.
+          </p>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+          >
+            Request Body (JSON)
+          </h4>
+          <pre><code>{
+  "number": ["628123456789"],
+  "images": [
+    {
+      "url": "https://www.appsheet.com/template/gettablefileurl?appName=Inventory-123&tableName=Products&fileName=Products_Images%2Fsepatu.jpg", // Contoh AppSheet
+      "caption": "Foto Produk dari AppSheet"
+    },
+    {
+      "url": "https://docs.google.com/uc?export=download&id=DRIVE_FILE_ID", // Contoh Google Drive Direct Link
+      "caption": "Foto Produk dari Google Drive"
+    }
+  ]
+}</code></pre>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2"
+          >
+            Response Sukses (200 OK)
+          </h4>
+          <pre><code class="text-emerald-400">{
+  "success": true,
+  "message": "2 pesan gambar berhasil dimasukkan ke antrian.",
+  "targets": ["628123456789@s.whatsapp.net"],
+  "queueRemaining": 2
+}</code></pre>
+
+          <div
+            class="text-xs text-blue-600 bg-blue-50 p-3 rounded border border-blue-200 my-4"
+          >
+            ℹ️ <b>Tips Google Drive:</b> Pastikan status file di Google Drive
+            sudah diatur ke <b>"Anyone with the link" (Publik)</b>. Gunakan
+            format struktur URL
+            <code class="bg-blue-100 px-1 rounded"
+              >https://docs.google.com/uc?export=download&id=ID_FILE_ANDA</code
+            >
+            agar server bisa mengunduh file secara langsung.
+          </div>
+        </section>
+
+        <section id="send-doc" class="mb-16 scroll-mt-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wide tracking-wider"
+              >POST</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">
+              /send-document
+            </h3>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">
+            Digunakan untuk mengirim satu atau banyak berkas dokumen sekaligus (seperti PDF, Excel, dsb)
+            secara massal ke banyak nomor tujuan dalam satu antrian (Multi-Document Broadcast).
+          </p>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+          >
+            Request Body (JSON)
+          </h4>
+          <pre><code>{
+  "number": ["628123456789"],
+  "documents": [
+    {
+      "url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      "fileName": "Invoice_Tagihan.pdf",
+      "caption": "Silakan unduh invoice tagihan bulan ini."
+    },
+    {
+      "url": "https://docs.google.com/uc?export=download&id=DRIVE_PDF_ID", 
+      "fileName": "Syarat_Ketentuan.pdf",
+      "caption": "Dokumen pelengkap syarat & ketentuan."
+    }
+  ]
+}</code></pre>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2"
+          >
+            Response Sukses (200 OK)
+          </h4>
+          <pre><code class="text-emerald-400">{
+  "success": true,
+  "message": "2 tugas dokumen berhasil dimasukkan ke antrian untuk 1 nomor tujuan.",
+  "targets": ["628123456789@s.whatsapp.net"],
+  "queueRemaining": 2
+}</code></pre>
+        </section>
+
+        <hr class="border-gray-200 my-10" />
+
+        <section id="webhook-receive" class="mb-16 scroll-mt-6">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class="method-webhook px-3 py-1 rounded text-xs font-bold uppercase tracking-wide tracking-wider"
+              >WEBHOOK</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">
+              Inbound Payload (Menerima Chat)
+            </h3>
+          </div>
+          <p class="text-sm text-gray-600 mb-4">
+            Jika Anda mengonfigurasi <b>Webhook Bot URL</b> di dashboard, server kami akan otomatis mem-forward (meneruskan) setiap obrolan teks umum masuk dari klien menggunakan metode <code class="bg-gray-100 text-slate-800 px-1 rounded text-xs">POST</code> ke URL server Anda.
+          </p>
+
+          <p class="text-xs font-medium text-amber-600 bg-amber-50 p-3 rounded border border-amber-200 my-3">
+            💡 <b>Sistem Proteksi:</b> Pesan lokasi dan pesan yang diawali dengan prefiks akuntansi resmi (<code class="bg-amber-100/50 px-1 rounded font-mono">/d</code>, <code class="bg-amber-100/50 px-1 rounded font-mono">/add</code>, <code class="bg-amber-100/50 px-1 rounded font-mono">Paid</code>, dll) <b>tidak akan ikut dikirim</b> ke webhook ini demi menghindari bentrokan fungsi bot Anda.
+          </p>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+          >
+            Payload JSON yang Diterima Server Anda (Request dari Kami)
+          </h4>
+          <pre><code class="text-blue-300">{
+  "userId": "6a1c3249425c66d4f787d0f7",
+  "from": "6283873406812@s.whatsapp.net", // ID Pengirim (Bisa personal / @g.us untuk grup)
+  "pushName": "Ahmad Fauzi",              // Nama profil WhatsApp pengirim
+  "messageId": "BAE53E2A12C54D88",         // ID Unik pesan dari Baileys
+  "text": "Halo bot, bisa minta informasi harga?", // Isi teks chat bersih
+  "timestamp": 1717307478,                 // Detik waktu pesan masuk (Epoch timestamp)
+  "rawMessage": {                          // Object JSON utuh bawaan Baileys untuk data extra
+    "key": {
+      "remoteJid": "6283873406812@s.whatsapp.net",
+      "fromMe": false,
+      "id": "BAE53E2A12C54D88"
+    },
+    "message": {
+      "conversation": "Halo bot, bisa minta informasi harga?"
+    },
+    "messageTimestamp": 1717307478,
+    "pushName": "Ahmad Fauzi"
+  }
+}</code></pre>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2"
+          >
+            Ketentuan Response Server Anda
+          </h4>
+          <p class="text-sm text-gray-600 mb-2">
+            Server Anda wajib mengembalikan HTTP Status Code <b>200 OK</b> atau <b>201 Created</b> dalam waktu kurang dari <b>5 detik</b> sebagai tanda pesan sukses diterima oleh bot Anda. 
+          </p>
+          <pre><code class="text-emerald-400">{
+  "status": "success" // Bebas, yang terpenting status HTTP adalah 200 OK
+}</code></pre>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const closeSidebarBtn = document.getElementById("closeSidebarBtn");
+      const sidebarMenu = document.getElementById("sidebarMenu");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+      const mobileLinks = document.querySelectorAll(".mobile-link");
+
+      function toggleSidebar() {
+        sidebarMenu.classList.toggle("hidden");
+        sidebarMenu.classList.toggle("flex");
+        setTimeout(() => {
+          sidebarMenu.classList.toggle("-translate-x-full");
+        }, 10);
+        sidebarOverlay.classList.toggle("hidden");
+      }
+
+      hamburgerBtn.addEventListener("click", toggleSidebar);
+      closeSidebarBtn.addEventListener("click", toggleSidebar);
+      sidebarOverlay.addEventListener("click", toggleSidebar);
+
+      mobileLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 768) {
+            toggleSidebar();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Dashboard</title>
+    <style>
+      .status {
+        font-weight: bold;
+      }
+      .offline {
+        color: red;
+      }
+      .online {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>User Dashboard</h2>
+
+    <p>Login sebagai: <b><%= user.username %></b></p>
+
+    <hr />
+
+    <h3>WhatsApp Gateway</h3>
+
+    <p>
+      Status WA:
+      <b id="waStatus"> <%= user.waStatus || 'disconnected' %> </b>
+    </p>
+
+    <p>
+      Nomor WA:
+      <b> <%= user.waNumber || '-' %> </b>
+    </p>
+
+    <p>API Key:</p>
+
+    <input
+      type="text"
+      id="apiKey"
+      value="<%= user.apiKey || '' %>"
+      readonly
+      style="width: 500px"
+    />
+
+    <button onclick="copyApiKey()">Copy API Key</button>
+    <br /><br />
+    <!-- <button id="connectWA">Connect WhatsApp</button> -->
+
+    <!-- <button id="connectWA">Connect WhatsApp</button> -->
+
+<button id="connectWA" <%= user.waStatus === 'connected' ? 'disabled' : '' %>>
+  <%= user.waStatus === 'connected' ? 'Sudah Terhubung' : 'Connect WhatsApp' %>
+</button> <br>
+
+<button id="disconnectWA" <%= user.waStatus !== 'connected' ? 'disabled' : '' %> style="background-color: #ff4d4d; color: white; border: none; padding: 6px 12px; cursor: pointer;">
+      Disconnect WhatsApp
+    </button>
+
+    <hr />
+
+    <h3>Webhook</h3>
+
+    <p>Webhook URL:</p>
+
+    <input
+      type="text"
+      id="webhookUrl"
+      value="<%= user.webhookUrl || '' %>"
+      placeholder="https://domainanda.com/webhook"
+      style="width: 500px"
+    />
+
+    <button onclick="saveWebhook()">Simpan Webhook</button>
+
+    <div id="webhookStatus"></div>
+    <br />
+    <button id="loadGroups">Load Groups</button>
+
+    <div id="groupList"></div>
+
+    <div id="status"></div>
+    <div id="qr"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const userId = "<%= user._id %>";
+
+      socket.on("connect", () => {
+        console.log("Socket connected FE");
+        socket.emit("join", userId); // 🔥 PINDAH KE SINI
+      });
+
+      
+const connectBtn = document.getElementById("connectWA");
+      const statusText = document.getElementById("status");
+      const waStatusEl = document.getElementById("waStatus");
+      const qrContainer = document.getElementById("qr");
+
+      // 1. KETIKA TOMBOL DIKLIK
+      connectBtn.onclick = async () => {
+        // Langsung disable tombol agar tidak bisa diklik berkali-kali saat proses loading/minta QR
+        connectBtn.disabled = true;
+        statusText.innerText = "Menunggu QR...";
+
+        try {
+          await fetch("/wa/connect", { method: "POST" });
+        } catch (error) {
+          console.error("Gagal memicu koneksi:", error);
+          // Jika fetch gagal, kembalikan tombol jadi aktif
+          connectBtn.disabled = false;
+          statusText.innerText = "Gagal memicu server.";
+        }
+      };
+
+    const disconnectBtn = document.getElementById("disconnectWA");
+
+      // 🛑 AKSI KETIKA TOMBOL DISCONNECT DIKLIK
+      disconnectBtn.onclick = async () => {
+        if (!confirm("Apakah Anda yakin ingin memutuskan koneksi WhatsApp?")) return;
+
+        disconnectBtn.disabled = true;
+        statusText.innerText = "Memutuskan koneksi...";
+
+        try {
+          const res = await fetch("/wa/disconnect", { method: "POST" });
+          const result = await res.json();
+          if (!result.success) {
+            alert("Gagal disconnect: " + result.message);
+            disconnectBtn.disabled = false;
+          }
+        } catch (error) {
+          console.error("Error saat disconnect:", error);
+          disconnectBtn.disabled = false;
+          statusText.innerText = "Gagal menghubungi server.";
+        }
+      };
+
+      // ==========================================
+      // 🔄 ATUR KONDISI TOMBOL PADA EVENT SOCKET.IO
+      // ==========================================
+
+      socket.on("qr", (data) => {
+        statusText.innerText = "Silakan Scan QR Code";
+        qrContainer.innerHTML = `<img src="${data.qr}" width="250">`;
+        
+        connectBtn.disabled = true;
+        connectBtn.innerText = "Scan QR Code...";
+        disconnectBtn.disabled = true; // Kunci tombol logout saat proses pairing QR
+      });
+
+      socket.on("ready", () => {
+        statusText.innerText = "WhatsApp Connected ✅";
+        waStatusEl.innerText = "connected";
+        qrContainer.innerHTML = ""; 
+
+        // Kunci tombol connect, BUKA tombol logout
+        connectBtn.disabled = true;
+        connectBtn.innerText = "Sudah Terhubung";
+        disconnectBtn.disabled = false; 
+      });
+
+      socket.on("logout", (data) => {
+        statusText.innerText = "WhatsApp Logged Out ❌";
+        waStatusEl.innerText = "disconnected";
+        qrContainer.innerHTML = ""; 
+
+        // Buka tombol connect, KUNCI tombol logout
+        connectBtn.disabled = false;
+        connectBtn.innerText = "Connect WhatsApp";
+        disconnectBtn.disabled = true; 
+      });
+
+      function copyApiKey() {
+        const input = document.getElementById("apiKey");
+
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        navigator.clipboard.writeText(input.value);
+
+        alert("API Key berhasil dicopy");
+      }
+
+      document.getElementById("loadGroups").onclick = async () => {
+        try {
+          const res = await fetch(`/wa/${userId}/groups`);
+
+          const result = await res.json();
+
+          if (!result.success) {
+            throw new Error(result.error);
+          }
+
+          const html = result.data
+            .map(
+              (group) => `
+          <div style="border:1px solid #ccc;padding:10px;margin:5px 0;">
+            <b>${group.name}</b><br>
+            ID: ${group.id}<br>
+            Members: ${group.size || 0}<br>
+            <button onclick="copyGroupId('${group.id}')">
+              Copy ID
+            </button>
+          </div>
+        `,
+            )
+            .join("");
+
+          document.getElementById("groupList").innerHTML = html;
+        } catch (err) {
+          console.error(err);
+
+          alert(err.message);
+        }
+      };
+
+      function copyGroupId(id) {
+        navigator.clipboard.writeText(id);
+        alert("Group ID dicopy");
+      }
+
+      async function saveWebhook() {
+        try {
+          const webhookUrl = document.getElementById("webhookUrl").value;
+
+          const res = await fetch("/webhook/save", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              webhookUrl,
+            }),
+          });
+
+          const result = await res.json();
+
+          if (!result.success) {
+            throw new Error(result.message);
+          }
+
+          document.getElementById("webhookStatus").innerHTML =
+            "✅ Webhook berhasil disimpan";
+        } catch (err) {
+          document.getElementById("webhookStatus").innerHTML =
+            "❌ " + err.message;
+        }
+      }
+    </script>
+  </body>
+</html>

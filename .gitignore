@@ -1,0 +1,5 @@
+/.env
+/backup
+/bot_akuntansi.js
+/node_modules
+/sessions

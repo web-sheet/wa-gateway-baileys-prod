@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Profile Settings - Websheet Gateway</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen">
+
+  <!-- Background -->
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+
+    <div class="absolute top-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
+
+  </div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl">
+
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+      <div>
+
+        <h1 class="text-2xl font-bold">
+          Websheet Gateway
+        </h1>
+
+        <p class="text-slate-400 text-sm">
+          Profile Settings
+        </p>
+
+      </div>
+
+      <div class="flex items-center gap-3">
+
+        <a
+          href="/dashboard"
+          class="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 transition"
+        >
+          <i class="fa-solid fa-arrow-left mr-2"></i>
+          Dashboard
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- Page Header -->
+    <div class="mb-8">
+
+      <h2 class="text-3xl font-black">
+        Pengaturan Profil
+      </h2>
+
+      <p class="text-slate-400 mt-2">
+        Kelola informasi akun dan keamanan login Anda.
+      </p>
+
+    </div>
+
+    <!-- Card -->
+    <div class="max-w-3xl">
+
+      <div class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
+
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-8">
+
+          <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+
+            <i class="fa-solid fa-user-gear text-xl"></i>
+
+          </div>
+
+          <div>
+
+            <h3 class="text-xl font-bold">
+              Informasi Akun
+            </h3>
+
+            <p class="text-slate-400 text-sm mt-1">
+              Ubah username dan password akun dashboard.
+            </p>
+
+          </div>
+
+        </div>
+
+        <!-- Alert -->
+        <div class="mb-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+
+          <div class="flex gap-3">
+
+            <i class="fa-solid fa-shield-halved text-cyan-400 mt-1"></i>
+
+            <div>
+
+              <p class="font-semibold text-cyan-300">
+                Keamanan Akun
+              </p>
+
+              <p class="text-sm text-slate-400 mt-1">
+                Untuk mengubah username atau password, Anda wajib memasukkan
+                password saat ini sebagai verifikasi keamanan.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Form -->
+        <form id="profileForm" class="space-y-6">
+
+          <!-- Username -->
+          <div>
+
+            <label class="block text-sm font-medium text-slate-300 mb-2">
+              Username
+            </label>
+
+            <div class="relative">
+
+              <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+
+              <input
+                type="text"
+                id="username"
+                value="<%= user.username %>"
+                required
+                class="w-full bg-black/20 border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+
+            </div>
+
+          </div>
+
+          <!-- Current Password -->
+          <div>
+
+            <label class="block text-sm font-medium text-slate-300 mb-2">
+              Password Saat Ini
+            </label>
+
+            <div class="relative">
+
+              <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+
+              <input
+                type="password"
+                id="currentPassword"
+                placeholder="Masukkan password saat ini"
+                required
+                class="w-full bg-black/20 border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+
+            </div>
+
+          </div>
+
+          <!-- New Password -->
+          <div>
+
+            <label class="block text-sm font-medium text-slate-300 mb-2">
+              Password Baru
+            </label>
+
+            <div class="relative">
+
+              <i class="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+
+              <input
+                type="password"
+                id="newPassword"
+                placeholder="Kosongkan jika tidak ingin mengganti password"
+                class="w-full bg-black/20 border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+
+            </div>
+
+          </div>
+
+          <!-- Status -->
+          <div
+            id="statusMessage"
+            class="hidden rounded-2xl px-4 py-3 text-sm"
+          ></div>
+
+          <!-- Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+
+            <a
+              href="/dashboard"
+              class="px-6 py-3 rounded-2xl border border-white/10 hover:bg-white/5 transition text-center"
+            >
+              <i class="fa-solid fa-arrow-left mr-2"></i>
+              Kembali
+            </a>
+
+            <button
+              id="saveBtn"
+              type="submit"
+              class="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 transition font-semibold shadow-lg shadow-emerald-500/20"
+            >
+              <i class="fa-solid fa-floppy-disk mr-2"></i>
+              Simpan Perubahan
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+
+    const form = document.getElementById("profileForm");
+    const statusBox = document.getElementById("statusMessage");
+    const saveBtn = document.getElementById("saveBtn");
+
+    form.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const currentPassword =
+        document.getElementById("currentPassword").value;
+      const newPassword =
+        document.getElementById("newPassword").value;
+
+      saveBtn.disabled = true;
+      saveBtn.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan...';
+
+      try {
+
+        const response = await fetch("/api/update-profile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username,
+            currentPassword,
+            newPassword
+          })
+        });
+
+        const result = await response.json();
+
+        statusBox.classList.remove("hidden");
+
+        if (result.success) {
+
+          statusBox.className =
+            "rounded-2xl px-4 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+
+          statusBox.innerHTML =
+            '<i class="fa-solid fa-circle-check mr-2"></i>' +
+            result.message;
+
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 1500);
+
+        } else {
+
+          statusBox.className =
+            "rounded-2xl px-4 py-3 text-sm bg-red-500/10 border border-red-500/20 text-red-400";
+
+          statusBox.innerHTML =
+            '<i class="fa-solid fa-circle-xmark mr-2"></i>' +
+            result.message;
+
+        }
+
+      } catch (err) {
+
+        statusBox.classList.remove("hidden");
+
+        statusBox.className =
+          "rounded-2xl px-4 py-3 text-sm bg-red-500/10 border border-red-500/20 text-red-400";
+
+        statusBox.innerHTML =
+          '<i class="fa-solid fa-circle-xmark mr-2"></i>Terjadi kesalahan sistem.';
+
+      }
+
+      saveBtn.disabled = false;
+
+      saveBtn.innerHTML =
+        '<i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Perubahan';
+
+    });
+
+  </script>
+
+</body>
+</html>

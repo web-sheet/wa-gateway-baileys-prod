@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      <%= typeof title !== 'undefined' ? title : 'Websheet Gateway' %>
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+      <script src="/socket.io/socket.io.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/512/733/733585.png"
+    />
+    <style>
+      body {
+        background:
+          radial-gradient(circle at top left, #25d36615, transparent 25%),
+          radial-gradient(circle at bottom right, #10b98115, transparent 25%),
+          #0f172a;
+      }
+      @keyframes pulse-green {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.5;
+        }
+      }
+      .animate-pulse-green {
+        animation: pulse-green 2s infinite ease-in-out;
+      }
+
+      /* ⚡ TAMBAHAN: Efek transisi halus antar halaman */
+      .page-transition {
+        animation: pageFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        will-change: opacity, transform;
+      }
+
+      @keyframes pageFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(6px); /* Efek muncul dari bawah sedikit */
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="text-white min-h-screen">
+    <%- include('partials/navbar') %> 
+
+    <main class="page-transition">
+      <%- body %>
+    </main>
+  </body>
+</html>

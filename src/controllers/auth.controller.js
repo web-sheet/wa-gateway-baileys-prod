@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { User } from "../models/User.js";
+import rateLimit from "express-rate-limit";
 
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -11,7 +12,7 @@ export const loginLimiter = rateLimit({
 });
 
 export const showLogin = (req, res) => {
-  res.render("auth/login");
+  res.render("auth/login", {layout: false});
 };
 
 export const showRegister = (req, res) => {

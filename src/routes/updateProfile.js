@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { User } from "../models/User.js";
 
 export const updateProfile = async (req, res) => {
-  const { username, currentPassword, newPassword } = req.body;
+  const { username, currentPassword, newPassword,  } = req.body;
   const loggedInUserId = req.session.user?._id; // Mengambil ID user dari session aktif
 
   if (!loggedInUserId) {

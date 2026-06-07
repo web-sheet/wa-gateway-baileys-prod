@@ -1,0 +1,325 @@
+ 
+  <%- include('../partials/navbar') %>
+  <div class="lg:ml-72 p-6 mx-auto p-6">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-white flex items-center">
+           Data Kontak WhatsApp
+        </h1>
+        <p class="text-sm text-slate-400 mt-1">Kelola database nomor pelanggan dan sinkronisasikan data kontak untuk kebutuhan broadcast Anda</p>
+      </div>
+      
+      <div>
+        <button id="btnSync" onclick="triggerSync()" 
+                class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-3 rounded-xl transition flex items-center justify-center shadow-lg shadow-emerald-900/20 group">
+          <i class="fa-solid fa-rotate mr-2 group-hover:rotate-180 transition-transform duration-500"></i>
+          <span id="btnText">Refresh</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-slate-800 rounded-2xl border border-white/5 overflow-hidden">
+      <div class="px-6 py-4 border-b border-white/5 bg-slate-900/50 flex items-center justify-between">
+        <h2 class="text-md font-semibold text-white"> Kontak yang berhasil disinkronkan dari WhatsApp </h2>
+        <span class="text-xs bg-slate-900 text-slate-400 border border-white/5 px-3 py-1 rounded-full font-medium">
+          Total: <%= typeof contacts !== 'undefined' ? contacts.length : 0 %> Kontak
+        </span>
+      </div>
+
+       <div class="relative w-full md:w-80 m-3">
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari nama atau nomor..."
+      class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pl-10 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/50">
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke-width="1.5"
+         stroke="currentColor"
+         class="w-5 h-5 absolute left-3 top-3.5 text-slate-500">
+
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 6 6a7.5 7.5 0 0 0 10.65 10.65Z"/>
+
+    </svg>
+
+  </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="bg-slate-900 text-xs uppercase text-slate-400">
+            <tr>
+              <th class="px-6 py-4 w-12 text-center">No</th>
+              <th class="px-6 py-4">Nama Kontak</th>
+              <th class="px-6 py-4">WhatsApp JID (ID Nomor)</th>
+              <th class="px-6 py-4">Status Enkripsi</th>
+              <th class="px-6 py-4">Terakhir Disinkronkan</th>
+            </tr>
+          </thead>
+     <tbody id="contactTable">
+  <% if (contacts?.length) { %>
+
+    <% contacts.forEach((contact, index) => { %>
+
+      <tr
+        class="contact-row border-b border-white/5 hover:bg-white/[0.03] transition"
+        data-name="<%= (contact.name || '').toLowerCase() %>"
+        data-jid="<%= (contact.jid || '').toLowerCase() %>">
+
+        <td class="px-6 py-4 text-center text-slate-500 row-number">
+          <%= index + 1 %>
+        </td>
+
+        <td class="px-6 py-4">
+
+          <div class="flex items-center gap-3">
+
+            <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-400 text-sm font-semibold">
+              <%= (contact.name || '?').charAt(0).toUpperCase() %>
+            </div>
+
+            <div>
+              <p class="font-medium text-white">
+                <%= contact.name %>
+              </p>
+            </div>
+
+          </div>
+
+        </td>
+
+        <td class="px-6 py-4 text-slate-400 font-mono text-xs">
+          <%= contact.jid %>
+        </td>
+
+        <td class="px-6 py-4">
+
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+
+            Ready
+
+          </span>
+
+        </td>
+
+        <td class="px-6 py-4 text-slate-500 text-xs whitespace-nowrap">
+          <%= new Date(contact.updatedAt).toLocaleString('id-ID', {
+            dateStyle:'medium',
+            timeStyle:'short'
+          }) %>
+        </td>
+
+      </tr>
+
+    <% }) %>
+
+  <% } else { %>
+
+    <tr>
+      <td colspan="5" class="py-14 text-center text-slate-500">
+        Belum ada kontak ditemukan.
+      </td>
+    </tr>
+
+  <% } %>
+</tbody>
+        </table>
+        <div
+  id="pagination"
+  class="flex justify-center items-center gap-2 py-5">
+</div>
+      </div>
+    </div>
+    
+  </div>
+
+<script>
+  function triggerSync() {
+    const btn = document.getElementById('btnSync');
+    const btnText = document.getElementById('btnText');
+    
+    // 1. Amankan tombol agar tidak diklik dua kali saat proses berjalan
+    btn.disabled = true;
+    btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+    btn.classList.add('bg-slate-700', 'cursor-not-allowed');
+    btnText.innerHTML = 'Refresh ...';
+
+    // 2. Tembak API ke Controller Backend
+    fetch('/contacts/sync')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          
+          // 🎯 3. UPDATE TABEL UI MANUALLY (VANILLA JS)
+          // Pastikan tag <tbody> pada tabel kamu memiliki id="contactTableBody"
+          const tableBody = document.getElementById('contactTableBody');
+          if (tableBody) {
+            tableBody.innerHTML = ''; // Bersihkan isi tabel lama terlebih dahulu
+
+            // Looping data kontak dari backend dan masfukkan ke tabel
+            data.contacts.forEach((contact, index) => {
+              const row = `
+                <tr class="border-b border-slate-700 hover:bg-slate-800">
+                  <td class="px-4 py-2 text-slate-300">${index + 1}</td>
+                  <td class="px-4 py-2 font-medium text-white">${contact.name}</td>
+                  <td class="px-4 py-2 text-slate-400">${contact.jid.split('@')[0]}</td>
+                </tr>
+              `;
+              tableBody.insertAdjacentHTML('beforeend', row);
+            });
+          }
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(err => {
+        console.error("Gagal refresh data:", err);
+        alert("Terjadi kesalahan koneksi ke server!");
+      })
+      .finally(() => {
+        // 🎯 4. KEMBALIKAN STATUS TOMBOL (Apapun hasilnya, sukses atau gagal)
+        resetButton(btn, btnText);
+      });
+  } // 👈 Kunci perbaikan: Menutup fungsi triggerSync() dengan benar
+
+  // Fungsi pembantu untuk merestart status tombol ke semula
+  function resetButton(btn, btnText) {
+    btn.disabled = false;
+    btn.classList.remove('bg-slate-700', 'cursor-not-allowed');
+    btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+    btnText.innerHTML = 'Refresh'; // Nama tombol disesuaikan dengan fungsi barunya
+  }
+
+  const rows = Array.from(document.querySelectorAll(".contact-row"));
+const searchInput = document.getElementById("searchInput");
+const pagination = document.getElementById("pagination");
+
+const perPage = 10;
+let currentPage = 1;
+let filteredRows = [...rows];
+
+function renderTable() {
+
+  rows.forEach(row => row.style.display = "none");
+
+  const start = (currentPage - 1) * perPage;
+  const end = start + perPage;
+
+  filteredRows
+    .slice(start, end)
+    .forEach((row, index) => {
+
+      row.style.display = "";
+
+      const numCell = row.querySelector(".row-number");
+
+      if (numCell) {
+        numCell.textContent = start + index + 1;
+      }
+    });
+
+  renderPagination();
+}
+
+function renderPagination() {
+
+  const totalPages =
+    Math.ceil(filteredRows.length / perPage);
+
+  pagination.innerHTML = "";
+
+  if (totalPages <= 1) return;
+
+  // Prev
+  const prevBtn = document.createElement("button");
+
+  prevBtn.innerHTML = "&larr;";
+
+  prevBtn.disabled = currentPage === 1;
+
+  prevBtn.className =
+    "w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40";
+
+  prevBtn.onclick = () => {
+    currentPage--;
+    renderTable();
+  };
+
+  pagination.appendChild(prevBtn);
+
+  const start =
+    Math.max(1, currentPage - 1);
+
+  const end =
+    Math.min(totalPages, currentPage + 1);
+
+  for (let i = start; i <= end; i++) {
+
+    const btn = document.createElement("button");
+
+    btn.textContent = i;
+
+    btn.className =
+      i === currentPage
+        ? "w-9 h-9 rounded-xl bg-emerald-500 text-white"
+        : "w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300";
+
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+    };
+
+    pagination.appendChild(btn);
+  }
+
+  // Next
+  const nextBtn = document.createElement("button");
+
+  nextBtn.innerHTML = "&rarr;";
+
+  nextBtn.disabled = currentPage === totalPages;
+
+  nextBtn.className =
+    "w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40";
+
+  nextBtn.onclick = () => {
+    currentPage++;
+    renderTable();
+  };
+
+  pagination.appendChild(nextBtn);
+}
+searchInput?.addEventListener("input", function() {
+
+  const keyword = this.value.toLowerCase();
+
+  filteredRows = rows.filter(row => {
+
+    const name =
+      row.dataset.name || "";
+
+    const jid =
+      row.dataset.jid || "";
+
+    return (
+      name.includes(keyword) ||
+      jid.includes(keyword)
+    );
+  });
+
+  currentPage = 1;
+
+  renderTable();
+});
+
+renderTable();
+</script>
+ 

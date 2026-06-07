@@ -4,19 +4,22 @@ import { getClient } from "../wa/initWA.js"; // 👈 Import fungsi barunya di si
 
 export const adminDashboard = async (req, res) => {
   try {
-    const rawUsers = await User.find().select("-password").sort({ createdAt: -1 });
+    const rawUsers = await User.find()
+      .select("-password")
+      .sort({ createdAt: -1 });
 
     const processedUsers = rawUsers.map((u) => {
       return {
         ...u.toObject(),
         // 🟢 Cek apakah waStatus di DB bernilai "connected"
-        isOnline: u.waStatus === "connected", 
+        isOnline: u.waStatus === "connected",
       };
     });
 
     res.render("admin/dashboard", {
       user: req.session.user,
       users: processedUsers,
+      path: req.path,
     });
   } catch (error) {
     console.error("Error Admin Dashboard:", error);

@@ -1,0 +1,254 @@
+ 
+   
+  <div class="lg:ml-72 p-6 mx-auto">
+
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold flex items-center gap-3 text-white">
+        Jadwal Status WhatsApp
+      </h2>
+      <p class="text-slate-400 mt-2">
+        Atur, jadwalkan, dan otomatisasi penerbitan cerita atau iklan produk ke WhatsApp Story Anda berdasarkan waktu tertentu
+      </p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="lg:col-span-1">
+        <form action="/dashboard/scheduled-status/send" method="POST" enctype="multipart/form-data" class="bg-slate-800 p-6 rounded-2xl border border-white/5 space-y-4">
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Nama / Judul Jadwal</label>
+            <input type="text" name="title" required placeholder="Misal: Promo Banner Hari Senin"
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm text-slate-400 font-medium">Foto Status (Opsional, kosongkan jika hanya teks)</label>
+            <input type="file" name="statusImage" id="statusImage" accept="image/*"
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Isi Status / Caption Gambar</label>
+            <textarea name="message" rows="5" required placeholder="Tulis cerita status atau caption iklan tokomu di sini..."
+                      class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Tipe Perulangan</label>
+            <select name="repeatType" id="repeatType" required
+                    class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+              <option value="once" selected>Sekali Tayang (Once)</option>
+              <option value="daily">Setiap Hari (Daily)</option>
+              <option value="weekly">Setiap Minggu (Weekly)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Waktu Upload Otomatis</label>
+            <input type="datetime-local" name="scheduledAt" id="scheduledInput" required
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+          </div>
+
+          <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20">
+            <i class="fa-solid fa-paper-plane"></i>Simpan & Amankan Jadwal
+          </button>
+        </form>
+      </div>
+
+      <div class="lg:col-span-2">
+        <div class="bg-slate-800 rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+          <div class="px-6 py-4 border-b border-white/5 bg-slate-900/50">
+            <h2 class="text-md font-semibold text-white flex items-center gap-2">
+              <i class="fa-solid fa-list-ul text-slate-400 text-xs"></i> Antrean Jadwal Story Aktif
+            </h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300 border-collapse">
+              <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-white/5">
+                <tr>
+                  <th class="px-6 py-4">Judul</th>
+                  <th class="px-6 py-4">Konten / Teks</th>
+                  <th class="px-6 py-4">Media</th>
+                  <th class="px-6 py-4">Waktu Tayang</th>
+                  <th class="px-6 py-4">Tipe</th> 
+                  <th class="px-6 py-4">Status</th>
+                  <th class="px-6 py-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5">
+                <% if (typeof schedules !== 'undefined' && schedules.length > 0) { %>
+                  <% schedules.forEach(sch => { %>
+                  <tr class="schedule-row border-b border-white/5 hover:bg-slate-700/30 transition">
+                      <td class="px-6 py-4 font-medium text-white truncate max-w-[120px]"><%= sch.title %></td>
+                      <td class="px-6 py-4 truncate max-w-[150px] text-slate-400"><%= sch.message %></td>
+                      <td class="px-6 py-4">
+                        <% if(sch.mediaUrl) { %>
+                          <span class="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 font-medium"><i class="fa-regular fa-image mr-1"></i>Gambar</span>
+                        <% } else { %>
+                          <span class="text-xs text-slate-400 bg-slate-900 px-2 py-1 rounded border border-white/5">Teks</span>
+                        <% } %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-slate-300 font-mono text-xs"><%= new Date(sch.scheduledAt).toLocaleString('id-ID') %></td>
+                      <td class="px-6 py-4">
+                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 capitalize font-medium">
+                          <%= sch.repeatType %>
+                        </span>
+                      </td> 
+                      <td class="px-6 py-4">
+                        <% 
+                          let badgeColor = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                          if (sch.status === 'scheduled') {
+                            badgeColor = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+                          } else if (sch.status === 'running') {
+                            badgeColor = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+                          }
+                        %>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-medium <%= badgeColor %> uppercase tracking-wider text-[10px]">
+                          <%= sch.status %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 text-center whitespace-nowrap">
+                        <div class="flex items-center justify-center">
+                          <% if (sch.status !== 'running') { %>
+                            <button onclick="deleteStatusSchedule('<%= sch._id %>')" class="text-slate-400 hover:text-red-400 transition-colors p-1" title="Hapus Jadwal Status">
+                              <i class="fa-solid fa-trash-can text-base"></i>
+                            </button>
+                          <% } else { %>
+                            <span class="text-slate-600 cursor-not-allowed p-1" title="Tidak dapat menghapus status yang sedang dikirim">
+                              <i class="fa-solid fa-trash-can text-base opacity-40"></i>
+                            </span>
+                          <% } %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                      <div class="flex flex-col items-center justify-center space-y-3">
+                        <i class="fa-solid fa-folder-open text-3xl text-slate-600"></i>
+                        <span>Belum ada jadwal status WA yang dibuat.</span>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <div class="flex items-center justify-between mt-6 mb-4">
+              <p class="text-sm text-slate-400 mx-5">
+                Total: <span id="scheduleTotal"><%= schedules?.length || 0 %></span> data
+              </p>
+              <div id="schedulePagination" class="flex items-center gap-2 mx-5"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div> </div>
+
+  <script>
+    // Kunci tanggal minimal agar user tidak bisa memilih waktu yang telah lewat
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
+    document.getElementById('scheduledInput').min = localISOTime;
+
+    // ⚡ FITUR BARU: Fungsi AJAX Fetch untuk menghapus jadwal status
+    async function deleteStatusSchedule(scheduleId) {
+      if (!confirm("Apakah Anda yakin ingin menghapus jadwal status WhatsApp ini?")) return;
+
+      try {
+        // Tembak endpoint backend baru kamu
+        const response = await fetch(`/dashboard/scheduled-status/delete/${scheduleId}`, {
+          method: "DELETE",
+        });
+        
+        const result = await response.json();
+
+        if (result.success) {
+          alert(result.message);
+          window.location.reload(); // Memuat ulang komponen tabel setelah berhasil dihapus
+        } else {
+          alert("Gagal menghapus: " + result.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan sistem saat mencoba menghapus jadwal status.");
+      }
+    }
+    
+    // Sistem Pagination Tabel
+    document.addEventListener("DOMContentLoaded", () => {
+      const rows = Array.from(document.querySelectorAll(".schedule-row"));
+      const rowsPerPage = 9;
+      let currentPage = 1;
+      const pagination = document.getElementById("schedulePagination");
+
+      if (!rows.length) return;
+
+      function renderPage(page) {
+        currentPage = page;
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+          row.style.display = index >= start && index < end ? "" : "none";
+        });
+
+        renderPagination();
+      }
+
+      function renderPagination() {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        // Prev
+        pagination.innerHTML += `
+          <button
+            onclick="changeSchedulePage(${currentPage - 1})"
+            ${currentPage === 1 ? "disabled" : ""}
+            class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40">
+            &larr;
+          </button>
+        `;
+
+        // Number
+        for (let i = 1; i <= totalPages; i++) {
+          pagination.innerHTML += `
+            <button
+              onclick="changeSchedulePage(${i})"
+              class="${
+                i === currentPage
+                  ? 'px-3 py-2 rounded-xl bg-emerald-500 text-white font-semibold'
+                  : 'px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10'
+              }">
+              ${i}
+            </button>
+          `;
+        }
+
+        // Next
+        pagination.innerHTML += `
+          <button
+            onclick="changeSchedulePage(${currentPage + 1})"
+            ${currentPage === totalPages ? "disabled" : ""}
+            class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40">
+            &rarr;
+          </button>
+        `;
+      }
+
+      window.changeSchedulePage = function(page) {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (page < 1 || page > totalPages) return;
+        renderPage(page);
+      };
+
+      renderPage(1);
+    });
+  </script>
+ 

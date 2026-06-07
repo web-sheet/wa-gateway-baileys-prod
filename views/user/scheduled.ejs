@@ -1,0 +1,268 @@
+ 
+   
+<div class="lg:ml-72 p-6 mx-auto">
+
+  <div class="mb-8">
+    <h2 class="text-3xl font-bold flex items-center gap-3 text-white">
+      Pesan Terjadwal (Scheduled)
+    </h2>
+    <p class="text-slate-400 mt-2">
+      Konfigurasi pengiriman pesan otomatis ke daftar nomor target pada jam, tanggal, atau perulangan waktu tertentu secara presisi
+    </p>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <div class="lg:col-span-1">
+      <form action="/dashboard/scheduled/send" method="POST" class="bg-slate-800 p-6 rounded-2xl border border-white/5 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-2">Judul Jadwal</label>
+          <input type="text" name="title" required placeholder="Misal: Broadcast Promo Malam Minggu"
+                 class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-2">Isi Pesan</label>
+          <textarea name="message" rows="4" required placeholder="Tulis pesan Anda di sini..."
+                    class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-2">Nomor Tujuan (Gunakan Enter atau Upload Excel)</label>
+          <textarea name="numbers" id="numbers" rows="5" required placeholder="628123456789&#10;628987654321"
+                    class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition font-mono"></textarea>
+        </div>
+
+        <div>
+          <label class="block mb-2 text-sm text-slate-400 font-medium">
+            Upload Excel / CSV (Opsional)
+          </label>
+          <input type="file" id="excelFile" accept=".xlsx,.xls,.csv"
+                 class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer focus:outline-none" />
+          <p class="text-xs text-slate-500 mt-2">
+            Format kolom pertama/baris: nomor HP saja
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-2">Tipe Perulangan</label>
+          <select name="repeatType" id="repeatType" required
+                  class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+            <option value="once" selected>Sekali Jalan (Once)</option>
+            <option value="daily">Setiap Hari (Daily)</option>
+            <option value="weekly">Setiap Minggu (Weekly)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-2" id="timeLabel">Waktu Eksekusi</label>
+          <input type="datetime-local" name="scheduledAt" id="scheduledInput" required
+                 class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Jeda Min (Detik)</label>
+            <input type="number" name="delayMin" value="30" min="5" required
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Jeda Max (Detik)</label>
+            <input type="number" name="delayMax" value="60" min="6" required
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 transition font-semibold shadow-lg shadow-emerald-500/20 text-white font-medium py-3 rounded-xl transition mt-2 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-calendar-check"></i> Simpan & Jadwalkan Pesan
+        </button>
+      </form>
+    </div>
+
+    <div class="lg:col-span-2">
+      <div class="bg-slate-800 rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+        <div class="px-6 py-4 border-b border-white/5 bg-slate-900/50 flex items-center justify-between">
+          <h2 class="text-md font-semibold text-white flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-slate-400 text-xs"></i> Daftar Antrean Jadwal
+          </h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300 border-collapse">
+            <thead class="bg-slate-900 text-xs uppercase text-slate-400 border-b border-white/5">
+              <tr>
+                <th class="px-6 py-4">Judul</th>
+                <th class="px-6 py-4">Waktu Target</th>
+                <th class="px-6 py-4">Target</th>
+                <th class="px-6 py-4">Tipe</th> 
+                <th class="px-6 py-4">Status</th>
+                <th class="px-6 py-4 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              <% if (typeof schedules !== 'undefined' && schedules.length > 0) { %>
+                <% schedules.forEach(sch => { %>
+                <tr class="schedule-row border-b border-white/5 hover:bg-slate-700/30 transition">
+                    <td class="px-6 py-4 font-medium text-white truncate max-w-[150px]"><%= sch.title %></td>
+                    <td class="px-6 py-4 whitespace-nowrap font-mono text-xs text-slate-300"><%= new Date(sch.scheduledAt).toLocaleString('id-ID') %></td>
+                    <td class="px-6 py-4 text-slate-400 font-medium"><%= sch.totalTarget %> nomor</td>
+                    <td class="px-6 py-4">
+                      <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/10 capitalize font-medium text-[11px]">
+                        <%= sch.repeatType %>
+                      </span>
+                    </td> 
+                    <td class="px-6 py-4">
+                      <% 
+                        let badgeColor = 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                        if (sch.status === 'scheduled') {
+                          badgeColor = 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
+                        } else if (sch.status === 'running') {
+                          badgeColor = 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+                        }
+                      %>
+                      <span class="px-2.5 py-1 rounded-full text-xs font-medium <%= badgeColor %> uppercase tracking-wider text-[10px]">
+                        <%= sch.status %>
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                      <div class="flex items-center justify-center">
+                        <% if (sch.status !== 'running') { %>
+                          <button onclick="deleteSchedule('<%= sch._id %>')" class="text-slate-400 hover:text-red-400 transition-colors p-1" title="Hapus Jadwal">
+                            <i class="fa-solid fa-trash-can text-base"></i>
+                          </button>
+                        <% } else { %>
+                          <span class="text-slate-600 cursor-not-allowed p-1" title="Tidak dapat menghapus jadwal yang sedang berjalan">
+                            <i class="fa-solid fa-trash-can text-base opacity-40"></i>
+                          </span>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                      <i class="fa-solid fa-folder-open text-3xl text-slate-600"></i>
+                      <span>Belum ada jadwal pesan dikonfigurasi.</span>
+                    </div>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+          <div id="pagination" class="flex items-center justify-center gap-2 py-5"></div>
+        </div>
+      </div>
+    </div>
+
+  </div> </div>
+
+  <script>
+    // 1. Batas minimal waktu input
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
+    document.getElementById('scheduledInput').min = localISOTime;
+
+    // 2. Ekstrak file Excel ke Textarea
+    document.getElementById("excelFile").addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const data = evt.target.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        const numbers = rows
+          .flat()
+          .filter(Boolean)
+          .map(v => String(v).replace(/\D/g, ""));
+
+        document.getElementById("numbers").value = numbers.join("\n");
+      };
+      reader.readAsBinaryString(file);
+    });
+
+    // 3. Handler AJAX Delete
+    async function deleteSchedule(scheduleId) {
+      if (!confirm("Apakah Anda yakin ingin menghapus jadwal pengiriman ini?")) return;
+
+      try {
+        const response = await fetch(`/dashboard/scheduled/delete/${scheduleId}`, {
+          method: "DELETE",
+        });
+        
+        const result = await response.json();
+
+        if (result.success) {
+          alert(result.message);
+          window.location.reload(); 
+        } else {
+          alert("Gagal menghapus: " + result.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan sistem saat mencoba menghapus.");
+      }
+    }
+
+    // 4. Sistem Pagination Tabel
+    const rows = Array.from(document.querySelectorAll(".schedule-row"));
+    const pagination = document.getElementById("pagination");
+    const perPage = 14;
+    let currentPage = 1;
+
+    function renderTable() {
+      rows.forEach(row => {
+        row.style.display = "none";
+      });
+
+      const start = (currentPage - 1) * perPage;
+      const end = start + perPage;
+
+      rows.slice(start, end).forEach(row => {
+        row.style.display = "";
+      });
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(rows.length / perPage);
+      pagination.innerHTML = "";
+
+      if (totalPages <= 1) return;
+
+      const prevBtn = document.createElement("button");
+      prevBtn.innerHTML = "&larr;";
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.className = "w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40";
+      prevBtn.onclick = () => {
+        currentPage--;
+        renderTable();
+      };
+      pagination.appendChild(prevBtn);
+
+      const info = document.createElement("div");
+      info.className = "px-4 text-sm text-slate-400";
+      info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+      pagination.appendChild(info);
+
+      const nextBtn = document.createElement("button");
+      nextBtn.innerHTML = "&rarr;";
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.className = "w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40";
+      nextBtn.onclick = () => {
+        currentPage++;
+        renderTable();
+      };
+      pagination.appendChild(nextBtn);
+    }
+
+    if (rows.length) {
+      renderTable();
+    }
+  </script>
+ 

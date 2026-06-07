@@ -5,12 +5,15 @@ import sessionConfig from "./config/session.js";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import autoreplyRoutes from "./routes/autoreply.routes.js";
 import apiRoutes from "./routes/api.js";
 import logRoutes from "./routes/logRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 import { authRequired } from "./middlewares/auth.middleware.js";
 import http from "http";
 import { initSocket } from "./wa/socket/io.js";
 import { restoreSessions } from "./wa/wa.js";
+import expressLayouts from "express-ejs-layouts";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -23,11 +26,14 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.use(expressLayouts);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const server = http.createServer(app);
 
 app.set("view engine", "ejs");
+
+app.set("layout", "layout");
 app.use(express.urlencoded({ extended: false }));
 app.use(sessionConfig);
 
@@ -35,18 +41,20 @@ app.use(authRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
 app.use(logRoutes);
+app.use(autoreplyRoutes);
+app.use(contactRoutes);
+
 app.use("/api", apiRoutes);
-
-// ROOT PAGE
-https://websheetapp.my.id/login
-
-
-// --- Rute untuk memanggil Halaman Dokumentasi ---
-app.get("/documentation", (req, res) => {
-  // Sesuaikan 'views/docs.html' dengan lokasi asli file dokumentasi kamu
-  res.sendFile(path.join(__dirname, "public", "docs.html")); 
+app.use((req, res, next) => {
+  res.locals.path = req.path;
+  next();
 });
 
+
+https: app.get("/documentation", (req, res) => {
+  
+  res.sendFile(path.join(__dirname, "public", "docs.html"));
+});
 
 app.get("/dashboard", authRequired, (req, res) => {
   res.send(`Halo ${req.session.user.username}`);

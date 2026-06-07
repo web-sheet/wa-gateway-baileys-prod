@@ -1,37 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard</title>
+ 
 
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Favicon -->
-<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/733/733585.png">
-
-  <style>
-    body {
-      background:
-        radial-gradient(circle at top left, #25d36615, transparent 25%),
-        radial-gradient(circle at bottom right, #10b98115, transparent 25%),
-        #0f172a;
-    }
-    @keyframes pulse-green {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.2); opacity: 0.5; }
-    }
-    .animate-pulse-green {
-      animation: pulse-green 2s infinite ease-in-out;
-    }
-  </style>
-</head>
-
-<body class="min-h-screen text-white">
-
- <%- include('../partials/navbar') %>
-
-  <main class="max-w-7xl mx-auto p-6">
+  <main class="lg:ml-72 mx-auto p-6">
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
       <div>
@@ -160,5 +129,4 @@
     </div>
   </main>
 
-</body>
-</html>
+ 

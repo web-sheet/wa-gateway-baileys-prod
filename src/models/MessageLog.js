@@ -7,7 +7,7 @@ const messageLogSchema = new mongoose.Schema({
   message: { type: String, default: "" },       // Isi teks atau caption media
   mediaUrl: { type: String, default: null },     // URL Gambar / PDF
   fileName: { type: String, default: null },     // Nama file khusus dokumen
-  status: { type: String, enum: ["pending", "sent", "failed"], default: "pending" },
+  status: { type: String, enum: ["pending", "sent", "failed", "scheduled"], default: "pending" },
   messageId: { type: String, default: null },    // 🔑 ID unik dari Baileys untuk tracking status
   errorReason: { type: String, default: null },
   createdAt: { 

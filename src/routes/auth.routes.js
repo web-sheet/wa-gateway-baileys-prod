@@ -18,4 +18,4 @@ router.post("/register", register);
 
 router.get("/logout", logout);
 
-export default router;
+export default router; 

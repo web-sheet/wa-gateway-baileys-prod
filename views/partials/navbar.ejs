@@ -1,187 +1,404 @@
-<header
-  class="sticky top-0 z-50 border-b border-white/10 bg-white/5 backdrop-blur-xl"
->
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-10">
-      <a href="/dashboard" class="group block">
-        <h1
-          class="text-2xl font-bold text-white group-hover:text-indigo-400 transition"
-        >
+<style>
+  <style>
+/* Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.6);
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148,163,184,.25) transparent;
+}
+</style>
+</style>
+
+<%
+const currentPath = typeof path !== "undefined"
+  ? path
+  : request?.path || "";
+
+function isActive(url) {
+  return currentPath === url;
+}
+
+const activeClass =
+  "bg-emerald-500/15 border border-emerald-500/20 text-emerald-400 shadow-lg shadow-emerald-500/10";
+
+const normalClass =
+  "text-slate-300 hover:text-white hover:bg-white/10";
+%>
+
+<!-- Mobile Header -->
+<div class="lg:hidden sticky top-0 z-50 bg-slate-900/90 backdrop-blur-xl border-b border-white/10">
+  <div class="flex items-center justify-between px-5 py-4">
+
+    <div>
+      <h1 class="font-bold text-lg text-white">
+        Websheet Gateway
+      </h1>
+
+      <p class="text-xs text-slate-400">
+        <%= user.role === 'admin'
+          ? 'Admin Dashboard'
+          : 'User Dashboard' %>
+      </p>
+    </div>
+
+    <button
+      id="menuBtn"
+      class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center">
+
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           stroke-width="1.5"
+           stroke="currentColor"
+           class="w-6 h-6">
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+
+      </svg>
+
+    </button>
+
+  </div>
+</div>
+
+<!-- Sidebar -->
+<aside
+  id="sidebar"
+  class="fixed top-0 left-0 z-50 w-72 h-screen bg-slate-900 border-r border-white/10 transform -translate-x-full lg:translate-x-0 transition duration-300">
+
+  <div class="h-full flex flex-col">
+
+    <!-- Logo -->
+    <div class="p-6 border-b border-white/10">
+
+      <a href="/dashboard">
+
+        <h1 class="text-2xl font-bold text-white">
           Websheet Gateway
         </h1>
-        <p class="text-slate-400 text-sm">
-          <%= user.role === 'admin' ? 'Admin Dashboard' : 'User Dashboard' %>
+
+        <p class="text-sm text-slate-400 mt-1">
+          <%= user.role === 'admin'
+            ? 'Admin Dashboard'
+            : 'User Dashboard' %>
         </p>
+
       </a>
 
-      <nav class="hidden md:flex items-center gap-2">
-            <% if (user.role === 'admin') { %>
-            <a href="/admin"
-                class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium">
-                Kelola User
-            </a>
-            <% } %>
-
-        <% if (user.role === 'admin') { %>
-
-
-                <a
-                href="/dashboard"
-                class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-                >
-                Dashboard
-                </a>
-        <% } %>
-
-
-        <a
-          href="/about"
-          class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-        >
-          About
-        </a>
-
-        <a
-          href="/documentation"
-          class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-        >
-          Documentation
-        </a>
-
-        <a
-          href="/contact"
-          class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-        >
-          Contact
-        </a>
-
-        <a
-          href="/profile"
-          class="px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-        >
-          Profil Saya
-        </a>
-      </nav>
     </div>
 
-    <div class="flex items-center gap-3">
-      <div class="hidden sm:block text-right">
-        <p class="text-sm text-slate-400">Login sebagai</p>
+ <!-- User -->
+<div class="p-6 border-b border-white/10">
 
-        <p class="font-semibold text-indigo-400"><%= user.username %></p>
-      </div>
+  <div class="flex items-center gap-3">
 
-      <a
-        href="/logout"
-        class="hidden md:flex px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 transition font-medium shadow-lg shadow-red-500/20"
-      >
-        Logout
-      </a>
+    <!-- Avatar -->
+    <div class="w-12 h-12 rounded-full bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-lg">
+      <%= user.username?.charAt(0).toUpperCase() || 'U' %>
+    </div>
 
-      <button
-        id="menuBtn"
-        class="md:hidden w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center justify-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-6 h-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
+    <!-- Info -->
+    <div class="min-w-0">
+
+      <p class="text-xs text-slate-500">
+        Login sebagai
+      </p>
+
+      <p class="font-semibold text-emerald-400 truncate">
+        <%= user.username %>
+      </p>
+ 
+    </div>
+
+  </div>
+
+</div>
+
+    <!-- Menu -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+
+      <% if (user.role === 'admin') { %>
+
+      <a href="/admin"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/admin') ? activeClass : normalClass %>">
+
+        <!-- Users -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M18 18.72a9.094 9.094 0 0 0 3.742-.479
+                   3 3 0 0 0-4.682-2.72m.94 3.198
+                   .001.031c0 .225-.012.447-.037.666A11.944
+                   11.944 0 0 1 12 21c-2.17 0-4.203-.576-5.964-1.584
+                   A6.062 6.062 0 0 1 6 18.75m12 0a5.971
+                   5.971 0 0 0-.941-3.197M6 18.75
+                   a5.971 5.971 0 0 1 .94-3.197m0 0
+                   a3 3 0 0 1 4.682-2.72m-4.682
+                   2.72a9.094 9.094 0 0 1-3.742-.479
+                   a3 3 0 0 1 4.682-2.72m.94 3.198
+                   a5.971 5.971 0 0 1 .94 3.197" />
+
         </svg>
-      </button>
-    </div>
-  </div>
 
-  <div
-    id="mobileMenu"
-    class="hidden md:hidden border-t border-white/10 bg-slate-900/95 backdrop-blur-xl"
-  >
-    <div class="px-6 py-5 space-y-3">
-      <div class="pb-4 border-b border-white/10">
-        <p class="text-xs text-slate-500">Login sebagai</p>
-        <p class="font-semibold text-indigo-400 mt-0.5">
-          <%= user.username %> (<%= user.role %>)
-        </p>
-      </div>
+        Kelola User
 
-  
-
-                <% if (user.role === 'admin') { %>
-           <a
-        href="/admin"
-        class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-      >
-        Admin
       </a>
-            <% } %>
 
+      <% } %>
 
-                            <% if (user.role === 'admin') { %>
-      <a
-        href="/dashboard"
-        class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-      >
+      <a href="/dashboard"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/dashboard') ? activeClass : normalClass %>">
+
+        <!-- Home -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m2.25 12 8.954-8.955c.44-.439
+                   1.152-.439 1.591 0L21.75 12M4.5
+                   9.75V19.5A2.25 2.25 0 0 0 6.75
+                   21.75h10.5A2.25 2.25 0 0 0
+                   19.5 19.5V9.75" />
+
+        </svg>
+
         Dashboard
-      </a>
-            <% } %>
 
-
-
-      <a
-        href="/about"
-        class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-      >
-        About
       </a>
 
-      <a
-        href="/documentation"
-        class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-      >
-        Documentation
+      <a href="/dashboard/autoreply"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/dashboard/autoreply') ? activeClass : normalClass %>">
+
+        <!-- Chat -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.625 9.75h6.75m-6.75
+                   3h4.5m6.375 5.25a9 9 0 1 0-18
+                   0h18Z" />
+
+        </svg>
+
+        Autoreply
+
       </a>
 
-      <a
-        href="/contact"
-        class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium"
-      >
-        Contact
+      <a href="/dashboard/broadcast"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/dashboard/broadcast') ? activeClass : normalClass %>">
+
+        <!-- Megaphone -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.34 3.94A9.776 9.776 0 0 1
+                   18.75 3v11.25a9.776 9.776 0 0 1-8.41-.94
+                   M5.25 6h2.25l7.5-3v15l-7.5-3H5.25A2.25
+                   2.25 0 0 1 3 12.75v-4.5A2.25 2.25 0 0 1
+                   5.25 6Z" />
+
+        </svg>
+
+        Broadcast
+
       </a>
 
-      <a
-        href="/profile"
-        class="flex items-center px-4 py-3 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 transition font-medium border border-white/5 bg-white/5"
-      >
+      <a href="/dashboard/scheduled"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/dashboard/scheduled') ? activeClass : normalClass %>">
+
+        <!-- Clock -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v6l4 2m6-2a10 10 0
+                   1 1-20 0 10 10 0 0 1 20 0Z"/>
+
+        </svg>
+
+        Pesan Terjadwal
+
+      </a>
+
+      <a href="/dashboard/scheduled-status"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/dashboard/scheduled-status') ? activeClass : normalClass %>">
+
+        <!-- Check -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m4.5 12.75 6 6 9-13.5"/>
+
+        </svg>
+
+        Status Terjadwal
+
+      </a>
+
+      <a href="/contacts"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/contacts') ? activeClass : normalClass %>">
+
+        <!-- Address Book -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.25 6.75v10.5m0-10.5h1.5
+                   a2.25 2.25 0 0 1 2.25 2.25v6
+                   a2.25 2.25 0 0 1-2.25 2.25h-1.5" />
+
+        </svg>
+
+        Kontak
+
+      </a>
+
+      <a href="/documentation"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/documentation') ? activeClass : normalClass %>">
+
+        <!-- Document -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19.5 14.25V8.847a2.25 2.25 0 0
+                   0-.659-1.591l-4.097-4.097A2.25
+                   2.25 0 0 0 13.153 2.5H6.75A2.25
+                   2.25 0 0 0 4.5 4.75v14.5A2.25
+                   2.25 0 0 0 6.75 21.5h10.5A2.25
+                   2.25 0 0 0 19.5 19.25v-5Z"/>
+
+        </svg>
+
+        Dokumentasi
+
+      </a>
+
+      <a href="/profile"
+         class="flex items-center gap-3 px-4 py-3 rounded-xl transition <%= isActive('/profile') ? activeClass : normalClass %>">
+
+        <!-- User -->
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="w-5 h-5">
+
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 6.75a3.75 3.75 0 1
+                   1-7.5 0 3.75 3.75 0 0 1
+                   7.5 0ZM4.5 20.118a7.5 7.5
+                   0 0 1 15 0"/>
+
+        </svg>
+
         Profil Saya
+
       </a>
 
-      <a
-        href="/logout"
-        class="flex items-center justify-center px-4 py-3 rounded-2xl bg-red-500 hover:bg-red-600 transition font-medium shadow-lg shadow-red-500/20 mt-4"
-      >
-        Logout
-      </a>
     </div>
+
+    <!-- Footer -->
+    <div class="p-4 border-t border-white/10">
+
+      <a href="/logout"
+         class="flex items-center justify-center w-full py-3 rounded-xl bg-red-500 hover:bg-red-600 transition font-medium <%= isActive('/logout') ? activeClass : normalClass %>">
+
+        Logout
+
+      </a>
+
+    </div>
+
   </div>
-</header>
+
+</aside>
+
+<!-- Overlay -->
+<div id="overlay"
+     class="hidden fixed inset-0 bg-black/60 z-40 lg:hidden">
+</div>
 
 <script>
-  // Script hamburger tetap dipertahankan agar fungsi klik di HP tidak mati
-  (() => {
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener("click", () => {
-        mobileMenu.classList.toggle("hidden");
-      });
-    }
-  })();
+const sidebar = document.getElementById("sidebar");
+const menuBtn = document.getElementById("menuBtn");
+const overlay = document.getElementById("overlay");
+
+function openSidebar() {
+  sidebar.classList.remove("-translate-x-full");
+  overlay.classList.remove("hidden");
+}
+
+function closeSidebar() {
+  sidebar.classList.add("-translate-x-full");
+  overlay.classList.add("hidden");
+}
+
+menuBtn?.addEventListener("click", openSidebar);
+overlay?.addEventListener("click", closeSidebar);
 </script>

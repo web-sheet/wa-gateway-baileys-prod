@@ -1,40 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Dashboard</title>
-    <!-- Favicon -->
-<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/733/733585.png">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/socket.io/socket.io.js"></script>
-
-    <style>
-      body {
-        background:
-          radial-gradient(circle at top left, #25d36615, transparent 25%),
-          radial-gradient(circle at bottom right, #10b98115, transparent 25%),
-          #0f172a;
-      }
-
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 20px;
-      }
-    </style>
-  </head>
-
-  <body class="min-h-screen text-white">
-
- <%- include('../partials/navbar') %>
-
+ 
     <!-- Main -->
-    <main class="max-w-7xl mx-auto p-6">
+    <main class="lg:ml-72 p-6">
+        <!-- <main class="max-w-7xl mx-auto p-6"> -->
 
       <!-- Heading -->
       <div class="mb-8">
@@ -364,7 +331,7 @@
                 id="apiKey"
                 readonly
                 rows="5"
-                class="w-full p-4 rounded-2xl bg-black/20 border border-white/10 text-emerald-400 text-sm resize-none focus:outline-none"><%= user.apiKey || '' %></textarea>
+                class="w-full p-3 rounded-2xl bg-black/20 border border-white/10 text-emerald-400 text-sm resize-none focus:outline-none"><%= user.apiKey || '' %></textarea>
 
               <button onclick="copyApiKey()"
                       class="w-full py-3 rounded-2xl bg-slate-700 hover:bg-slate-600 transition font-semibold">
@@ -631,7 +598,7 @@
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
     <div>
       <h3 class="text-xl font-bold flex items-center mb-2">
-        <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
+        <i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i>
         Riwayat Pengiriman
       </h3>
       <span id="totalPesanCount" class="text-xs font-mono px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
@@ -1775,5 +1742,4 @@ function closeModal() {
    
    </script>
 
-  </body>
-</html>
+ 

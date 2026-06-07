@@ -1,0 +1,275 @@
+ 
+<main class="lg:ml-72 p-6 mx-auto px-6 py-8">
+
+  <div class="mb-8">
+    <h2 class="text-3xl font-bold flex items-center gap-3 text-white">
+   
+      Auto Reply Bot
+    </h2>
+    <p class="text-slate-400 mt-2">
+      Kelola kata kunci pemicu (rules), pesan balasan otomatis, dan integrasi kecerdasan bot WhatsApp Anda
+    </p>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="bg-white/5 border border-white/10 p-6 rounded-2xl h-fit">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2  ">
+        <i class="fa-solid fa-plus-circle"></i> Tambah Kata Kunci
+      </h2>
+      
+      <form action="/dashboard/autoreply" method="POST" class="space-y-4">
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Kata Kunci (Keyword)</label>
+          <input type="text" name="keyword" placeholder="contoh: halo, harga, menu" required
+                 class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Tipe Balasan</label>
+          <select name="replyType" id="replyType" onchange="toggleListFields()"
+                  class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500 transition">
+            <option value="text">Teks Murni 📝</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-400 mb-1">Isi Pesan / Kalimat Pengantar</label>
+          <textarea name="replyContent" rows="3" placeholder="Tulis balasan bot di sini..." required
+                    class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition"></textarea>
+        </div>
+
+        <div id="listFields" class="hidden space-y-3 pt-3 border-t border-white/5">
+          <div>
+            <label class="block text-sm text-slate-400 mb-1">Teks Tombol Pop-up</label>
+            <input type="text" name="buttonText" placeholder="Pilih Layanan"
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-indigo-500 transition">
+          </div>
+          
+          <div class="space-y-2">
+            <label class="block text-sm text-slate-400">Pilihan Menu</label>
+            <div id="menuRowsContainer" class="space-y-2">
+              <div class="grid grid-cols-12 gap-2 menu-row">
+                <input type="text" name="rowTitles" placeholder="Judul Menu" required
+                       class="col-span-4 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                <input type="text" name="rowDescriptions" placeholder="Deskripsi"
+                       class="col-span-5 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                <input type="text" name="rowIds" placeholder="ID (Opsional)"
+                       class="col-span-2 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                <button type="button" onclick="removeRow(this)" class="col-span-1 bg-red-500/20 hover:bg-red-600 text-red-400 rounded-xl transition flex items-center justify-center font-bold">
+                  ×
+                </button>
+              </div>
+            </div>
+            <button type="button" onclick="addRow()" class="mt-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-sm font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-plus text-xs"></i> Tambah Menu
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 transition   shadow-lg shadow-emerald-500/20 text-white font-medium py-2.5 rounded-xl transition ">
+          Simpan Keyword
+        </button>
+      </form>
+    </div>
+
+    <div class="bg-white/5 border border-white/10 p-6 rounded-2xl lg:col-span-2">
+      <h2 class="text-xl font-bold mb-4 text-slate-300 flex items-center gap-2">
+        <i class="fa-solid fa-list"></i> Daftar Autoreply Aktif
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-white/10 text-slate-400 text-sm">
+              <th class="pb-3 font-medium">Keyword</th>
+              <th class="pb-3 font-medium">Tipe</th>
+              <th class="pb-3 font-medium">Isi / Pengantar</th>
+              <th class="pb-3 font-medium text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-sm">
+            <% if (replies.length === 0) { %>
+              <tr>
+                <td colspan="4" class="py-8 text-center text-slate-500">Belum ada autoreply yang dibuat.</td>
+              </tr>
+            <% } %>
+            <% replies.forEach(reply => { %>
+              <tr id="row-<%= reply._id %>">
+                <td class="py-3.5 font-bold text-indigo-400"><%= reply.keyword %></td>
+                <td class="py-3.5">
+                  <span class="px-2 py-0.5 rounded text-xs font-semibold <%= reply.replyType === 'list' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20' %>">
+                    <%= reply.replyType.toUpperCase() %>
+                  </span>
+                </td>
+                <td class="py-3.5 text-slate-300 max-w-xs truncate"><%= reply.replyContent %></td>
+                <td class="py-3.5 text-center">
+                  <button onclick="deleteRow('<%= reply._id %>')" class="text-red-400 hover:text-red-300 p-2 transition">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <div class="flex items-center justify-between mt-6">
+
+  <p class="text-sm text-slate-400">
+    Total: <span id="totalRows"><%= replies.length %></span> data
+  </p>
+
+  <div id="pagination"
+       class="flex items-center gap-2">
+  </div>
+
+</div>
+      </div>
+    </div>
+
+  </div> </main>
+
+  <script>
+    function toggleListFields() {
+      const type = document.getElementById('replyType').value;
+      const listFields = document.getElementById('listFields');
+      const firstTitleInput = document.querySelector('input[name="rowTitles"]');
+      
+      if (type === 'list') {
+        listFields.classList.remove('hidden');
+        if(firstTitleInput) firstTitleInput.required = true;
+      } else {
+        listFields.classList.add('hidden');
+        if(firstTitleInput) firstTitleInput.required = false;
+      }
+    }
+
+    async function deleteRow(id) {
+      if (confirm("Apakah kamu yakin ingin menghapus keyword ini?")) {
+        const response = await fetch(`/dashboard/autoreply/${id}`, { method: 'DELETE' });
+        const result = await response.json();
+        if (result.success) {
+          document.getElementById(`row-${id}`).remove();
+        } else {
+          alert("Gagal menghapus data");
+        }
+      }
+    }
+
+    function addRow() {
+      const container = document.getElementById("menuRowsContainer");
+      const row = document.createElement("div");
+      row.className = "grid grid-cols-12 gap-2 menu-row";
+      row.innerHTML = `
+        <input type="text" name="rowTitles" placeholder="Judul Menu" required
+               class="col-span-4 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+        <input type="text" name="rowDescriptions" placeholder="Deskripsi"
+               class="col-span-5 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+        <input type="text" name="rowIds" placeholder="ID (Opsional)"
+               class="col-span-2 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+        <button type="button" onclick="removeRow(this)" class="col-span-1 bg-red-500/20 hover:bg-red-600 text-red-400 rounded-xl transition flex items-center justify-center font-bold">
+          ×
+        </button>
+      `;
+      container.appendChild(row);
+    }
+
+    function removeRow(btn) {
+      const rows = document.querySelectorAll(".menu-row");
+      if (rows.length <= 1) {
+        alert("Minimal harus ada 1 baris menu pilihan!");
+        return;
+      }
+      btn.closest(".menu-row").remove();
+    }
+
+
+     
+document.addEventListener("DOMContentLoaded", () => {
+
+  const rows = Array.from(document.querySelectorAll(".reply-row"));
+
+  const rowsPerPage = 10;
+  let currentPage = 1;
+
+  const pagination = document.getElementById("pagination");
+
+  function renderTable(page) {
+
+    currentPage = page;
+
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    rows.forEach((row, index) => {
+      row.style.display =
+        index >= start && index < end
+          ? ""
+          : "none";
+    });
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+    pagination.innerHTML = "";
+
+    // Previous
+    const prevBtn = document.createElement("button");
+
+    prevBtn.innerHTML = "&laquo;";
+    prevBtn.disabled = currentPage === 1;
+
+    prevBtn.className =
+      "px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40";
+
+    prevBtn.onclick = () => renderTable(currentPage - 1);
+
+    pagination.appendChild(prevBtn);
+
+    // Page Numbers
+    for (let i = 1; i <= totalPages; i++) {
+
+      const btn = document.createElement("button");
+
+      btn.textContent = i;
+
+      btn.className =
+        i === currentPage
+          ? "px-3 py-2 rounded-xl bg-emerald-500 text-white font-semibold"
+          : "px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10";
+
+      btn.onclick = () => renderTable(i);
+
+      pagination.appendChild(btn);
+    }
+
+    // Next
+    const nextBtn = document.createElement("button");
+
+    nextBtn.innerHTML = "&raquo;";
+    nextBtn.disabled = currentPage === totalPages;
+
+    nextBtn.className =
+      "px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40";
+
+    nextBtn.onclick = () => renderTable(currentPage + 1);
+
+    pagination.appendChild(nextBtn);
+  }
+
+  renderTable(1);
+
+});
+
+// Menggantikan fungsi onload="" yang ada di tag body sebelumnya
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof toggleListFields === "function") {
+      toggleListFields();
+    }
+  });
+ 
+ 
+  </script>
+ 

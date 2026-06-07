@@ -1,5 +1,3 @@
-
-
 import { User } from "../models/User.js";
 // 🟢 1. Jangan lupa import model MessageLog di bagian atas
 import { MessageLog } from "../models/MessageLog.js";
@@ -22,6 +20,7 @@ export const userDashboard = async (req, res) => {
       user,
       logs: recentLogs,
       totalLogs: totalLogs, // 👈 Ini wajib ditambahkan
+      path: req.path,
     });
   } catch (error) {
     console.error("🔴 Gagal memuat user dashboard:", error.message);

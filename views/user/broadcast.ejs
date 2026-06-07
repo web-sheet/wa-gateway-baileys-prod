@@ -1,0 +1,325 @@
+ 
+
+  <div class="lg:ml-72 p-6 mx-auto">
+
+    <!-- ======================================================== -->
+    <!-- 🎯 HEADING BARU (DI ATAS GRID, MEMBENTANG PENUH)          -->
+    <!-- ======================================================== -->
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold flex items-center gap-3 text-white">
+     
+        WhatsApp Broadcast Campaign
+      </h2>
+      <p class="text-slate-400 mt-2">
+        Kirim pesan massal secara terjadwal dengan pengaturan jeda (anti-ban) via input teks manual maupun berkas Excel
+      </p>
+    </div>
+    <!-- ======================================================== -->
+
+    <!-- 💡 TATA LETAK GRID ASLI KAMU (100% UTUH & PRESISI) -->
+    <div class="grid lg:grid-cols-3 gap-6">
+
+      <!-- FORM BROADCAST -->
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2  ">
+          <i class="fa-solid fa-bullhorn text-sm"></i> Broadcast Baru
+        </h2>
+
+        <div class="grid grid-cols-2 gap-4">
+        </div>
+
+        <form
+          action="/dashboard/broadcast"
+          method="POST"
+          enctype="multipart/form-data"
+          class="space-y-4"
+        >
+
+          <input
+            name="title"
+            placeholder="Nama Broadcast"
+            required
+            class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition"
+          />
+
+          <textarea
+            name="message"
+            rows="5"
+            placeholder="Isi pesan"
+            required
+            class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition"
+          ></textarea>
+
+          <div>
+            <label class="block mb-2 text-sm text-slate-400">
+              Nomor Tujuan (Opsional)
+            </label>
+
+            <textarea
+              name="numbers"
+              id="numbers"
+              rows="8"
+              placeholder="628xxx&#10;628xxx&#10;628xxx"
+              class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-indigo-500 transition font-mono"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm text-slate-400">
+              Upload Excel / CSV (Opsional)
+            </label>
+
+            <input
+              type="file"
+              name="file"
+              id="excelFile"
+              accept=".xlsx,.xls,.csv"
+               class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-white text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer focus:outline-none" 
+            />
+
+            <p class="text-xs text-slate-500 mt-2">
+              Format kolom: nomor
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Jeda Minimal (Detik)</label>
+            <input type="number" name="delayMin" value="30" min="5" required
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Jeda Maksimal (Detik)</label>
+            <input type="number" name="delayMax" value="60" min="6" required
+                   class="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-emerald-500 hover:bg-emerald-600 transition font-semibold shadow-lg shadow-emerald-500/20  py-3 rounded-xl text-white transition shadow-lg  "
+          >
+            Kirim Broadcast
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- RIWAYAT -->
+      <div class="lg:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
+
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-300">
+          <i class="fa-solid fa-clock-rotate-left text-sm"></i> Riwayat Broadcast
+        </h2>
+
+        <div class="overflow-x-auto">
+
+          <table class="w-full text-sm border-collapse">
+
+            <thead>
+              <tr class="border-b border-white/10 text-slate-400 font-medium">
+                <th class="py-3 text-left">Judul</th>
+                <th class="py-3 text-center">Total</th>
+                <th class="py-3 text-center">Sukses</th>
+                <th class="py-3 text-center">Gagal</th>
+                <th class="py-3 text-center">Status</th>
+              </tr>
+            </thead>
+
+         <tbody class="divide-y divide-white/10">
+
+  <% if (broadcasts.length === 0) { %>
+    <tr>
+      <td colspan="5" class="py-8 text-center text-slate-500">
+        Belum ada riwayat broadcast.
+      </td>
+    </tr>
+  <% } %>
+
+  <% broadcasts.forEach(item => { %>
+
+  <tr class="broadcast-row hover:bg-white/[0.02] transition">
+
+    <td class="py-3.5 font-medium text-slate-200">
+      <%= item.title %>
+    </td>
+
+    <td class="text-center text-slate-300 font-mono">
+      <%= item.totalTarget %>
+    </td>
+
+    <td class="text-center text-emerald-400 font-semibold font-mono">
+      <%= item.success %>
+    </td>
+
+    <td class="text-center text-red-400 font-semibold font-mono">
+      <%= item.failed %>
+    </td>
+
+    <td class="text-center">
+      <span class="px-2.5 py-1 rounded-lg bg-white/10 text-xs font-medium">
+        <%= item.status %>
+      </span>
+    </td>
+
+  </tr>
+
+  <% }) %>
+
+</tbody>
+
+          </table>
+
+          <div class="flex items-center justify-between mt-6">
+
+  <p class="text-sm text-slate-400">
+    Total: <span id="broadcastTotal"><%= broadcasts.length %></span> data
+  </p>
+
+  <div id="broadcastPagination"
+       class="flex items-center gap-2">
+  </div>
+
+</div>
+
+        </div>
+
+      </div>
+
+    </div> <!-- Penutup Grid -->
+
+  </div>
+
+  <script>
+document
+  .getElementById("excelFile")
+  .addEventListener("change", function (e) {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(evt) {
+
+      const data = evt.target.result;
+
+      const workbook = XLSX.read(data, {
+        type: "binary",
+      });
+
+      const sheet =
+        workbook.Sheets[
+          workbook.SheetNames[0]
+        ];
+
+      const rows = XLSX.utils.sheet_to_json(
+        sheet,
+        { header: 1 }
+      );
+
+      const numbers = rows
+        .flat()
+        .filter(Boolean)
+        .map(v => String(v).replace(/\D/g, ""));
+
+      document.getElementById("numbers").value =
+        numbers.join("\n");
+    };
+
+    reader.readAsBinaryString(file);
+});
+ 
+document.addEventListener("DOMContentLoaded", () => {
+
+  const rows = Array.from(
+    document.querySelectorAll(".broadcast-row")
+  );
+
+  const rowsPerPage = 20;
+  let currentPage = 1;
+
+  const pagination =
+    document.getElementById("broadcastPagination");
+
+  function showPage(page) {
+
+    currentPage = page;
+
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    rows.forEach((row, index) => {
+      row.style.display =
+        index >= start && index < end
+          ? ""
+          : "none";
+    });
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+
+    const totalPages =
+      Math.ceil(rows.length / rowsPerPage);
+
+    pagination.innerHTML = "";
+
+    if (totalPages <= 1) return;
+
+    // Previous
+    pagination.innerHTML += `
+      <button
+        onclick="changeBroadcastPage(${currentPage - 1})"
+        ${currentPage === 1 ? "disabled" : ""}
+        class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40">
+        ‹
+      </button>
+    `;
+
+    // Page Number
+    for (let i = 1; i <= totalPages; i++) {
+
+      pagination.innerHTML += `
+        <button
+          onclick="changeBroadcastPage(${i})"
+          class="${
+            i === currentPage
+              ? 'px-3 py-2 rounded-xl bg-emerald-500 text-white font-semibold'
+              : 'px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10'
+          }">
+          ${i}
+        </button>
+      `;
+    }
+
+    // Next
+    pagination.innerHTML += `
+      <button
+        onclick="changeBroadcastPage(${currentPage + 1})"
+        ${currentPage === totalPages ? "disabled" : ""}
+        class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-40">
+        ›
+      </button>
+    `;
+  }
+
+  window.changeBroadcastPage = function(page) {
+
+    const totalPages =
+      Math.ceil(rows.length / rowsPerPage);
+
+    if (page < 1 || page > totalPages) return;
+
+    showPage(page);
+  };
+
+  showPage(1);
+
+});
+ 
+
+</script>
+ 

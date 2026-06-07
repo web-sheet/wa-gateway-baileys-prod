@@ -8,7 +8,6 @@ import { updateProfile } from "./updateProfile.js";
 
 const router = express.Router();
 
- 
 router.post("/send", async (req, res) => {
   try {
     const apiKey = req.headers["x-api-key"];
@@ -32,7 +31,8 @@ router.post("/send", async (req, res) => {
         .json({ success: false, message: "WhatsApp belum connect" });
     }
 
-    const { number, message } = req.body;
+    // 🎯 UPDATE: Ambil delayMin dan delayMax dari body request JSON
+    const { number, message, delayMin, delayMax } = req.body;
 
     if (!number) {
       return res
@@ -71,11 +71,13 @@ router.post("/send", async (req, res) => {
         messageId: internalMsgId, // Simpan ID sementara untuk pelacakan worker nanti
       });
 
-      // 🟢 LANGKAH 3: Masukkan nomor ke antrian RAM (teruskan internalMsgId-nya)
+      // 🟢 LANGKAH 3: Masukkan nomor ke antrian RAM (Teruskan param delay opsional)
       addMessageToQueue(user._id.toString(), jid, {
         type: "text",
         message: message,
-        messageId: internalMsgId, // 👈 Teruskan ID ini ke antrian RAM
+        messageId: internalMsgId,
+        delayMin: delayMin || undefined, // 🎯 Jika kosong di JSON, akan dikirim undefined agar queue service pakai nilai defaultnya
+        delayMax: delayMax || undefined, // 🎯 Jika kosong di JSON, akan dikirim undefined agar queue service pakai nilai defaultnya
       });
 
       targetsProcessed.push(jid);
@@ -94,7 +96,7 @@ router.post("/send", async (req, res) => {
     return res.status(500).json({ success: false, error: err.message });
   }
 });
- 
+
 router.post("/send-image", async (req, res) => {
   try {
     const apiKey = req.headers["x-api-key"];
@@ -118,8 +120,8 @@ router.post("/send-image", async (req, res) => {
         .json({ success: false, message: "WhatsApp belum connect" });
     }
 
-    // 📥 AMBIL DATA: Sekarang kita mengekstrak 'images' (bukan imageUrl dan caption tunggal lagi)
-    const { number, images } = req.body;
+    // 🎯 UPDATE: Ambil delayMin dan delayMax juga dari body request JSON
+    const { number, images, delayMin, delayMax } = req.body;
 
     if (!number || !images) {
       return res.status(400).json({
@@ -130,7 +132,7 @@ router.post("/send-image", async (req, res) => {
 
     // 📦 NORMALISASI INPUT
     const targetNumbers = Array.isArray(number) ? number : [number];
-    const imageList = Array.isArray(images) ? images : [images]; // Jaga-jaga jika konsumen mengirim objek tunggal
+    const imageList = Array.isArray(images) ? images : [images];
 
     let totalJobsAdded = 0;
     const targetsProcessed = [];
@@ -153,7 +155,7 @@ router.post("/send-image", async (req, res) => {
         const imageUrl = imgData.url || imgData.imageUrl;
         const caption = imgData.caption || "";
 
-        if (!imageUrl) continue; // Lewati jika data URL gambar kosong
+        if (!imageUrl) continue;
 
         // 🟢 LANGKAH 2: Buat ID unik sementara untuk tracking antrian RAM
         const internalMsgId =
@@ -167,15 +169,17 @@ router.post("/send-image", async (req, res) => {
           message: caption,
           mediaUrl: imageUrl,
           status: "pending",
-          messageId: internalMsgId, // Simpan ID sementara ini
+          messageId: internalMsgId,
         });
 
-        // 🟢 LANGKAH 4: Masukkan ke sistem antrian RAM (teruskan internalMsgId-nya)
+        // 🟢 LANGKAH 4: Masukkan ke sistem antrian RAM (Teruskan param delay opsional)
         addMessageToQueue(user._id.toString(), jid, {
           type: "image",
           imageUrl,
           caption,
-          messageId: internalMsgId, // 👈 Sangat penting untuk proses update 'sent'/'failed' nanti
+          messageId: internalMsgId,
+          delayMin: delayMin || undefined, // 🎯 Oper ke queueService jika ada di JSON
+          delayMax: delayMax || undefined, // 🎯 Oper ke queueService jika ada di JSON
         });
 
         totalJobsAdded++;
@@ -222,8 +226,8 @@ router.post("/send-document", async (req, res) => {
         .json({ success: false, message: "WhatsApp belum connect" });
     }
 
-    // 🟢 Ambil 'number' dan array 'documents' dari body
-    const { number, documents } = req.body;
+    // 🎯 UPDATE: Ambil delayMin dan delayMax dari body request JSON
+    const { number, documents, delayMin, delayMax } = req.body;
 
     if (
       !number ||
@@ -244,7 +248,6 @@ router.post("/send-document", async (req, res) => {
     let totalJobsAdded = 0;
 
     // 🔄 PERULANGAN UTAMA: Memecah Nomor Tujuan
-    // 🔄 PERULANGAN UTAMA: Memecah Nomor Tujuan
     for (const rawNumber of targetNumbers) {
       // 🔍 LOGIKA PENENTUAN JID (Pribadi vs Grup)
       let jid;
@@ -259,7 +262,6 @@ router.post("/send-document", async (req, res) => {
 
       // 🔄 PERULANGAN KEDUA: Memasukkan setiap dokumen ke dalam antrian nomor tersebut
       for (const doc of documents) {
-        // Validasi internal objek dokumen memastikan url-nya ada
         if (!doc.url) continue;
 
         // 🟢 LANGKAH 1: Buat ID unik sementara untuk tracking antrian RAM
@@ -271,20 +273,22 @@ router.post("/send-document", async (req, res) => {
           userId: user._id,
           to: jid,
           messageType: "document",
-          message: doc.caption || "", // Caption dokumen disimpan di kolom message
-          mediaUrl: doc.url, // URL file PDF/Excel/dll disimpan di mediaUrl
-          fileName: doc.fileName || "Document", // Nama file dokumen
+          message: doc.caption || "",
+          mediaUrl: doc.url,
+          fileName: doc.fileName || "Document",
           status: "pending",
-          messageId: internalMsgId, // Simpan ID sementara untuk pelacakan worker nanti
+          messageId: internalMsgId,
         });
 
-        // 🟢 LANGKAH 3: Masukkan ke sistem antrian RAM (tergantung struktur worker kamu)
+        // 🟢 LANGKAH 3: Masukkan ke sistem antrian RAM (Teruskan param delay opsional)
         addMessageToQueue(user._id.toString(), jid, {
           type: "document",
           documentUrl: doc.url,
           fileName: doc.fileName || "Document",
           caption: doc.caption || "",
-          messageId: internalMsgId, // 👈 Teruskan ID ini ke antrian RAM
+          messageId: internalMsgId,
+          delayMin: delayMin || undefined, // 🎯 Oper ke queueService jika ada di JSON
+          delayMax: delayMax || undefined, // 🎯 Oper ke queueService jika ada di JSON
         });
 
         totalJobsAdded++;
@@ -295,7 +299,6 @@ router.post("/send-document", async (req, res) => {
 
     const sisaAntrian = getQueueLength(user._id.toString());
 
-    // Berikan respon sukses instan ke client API beserta total antrian baru
     return res.json({
       success: true,
       message: `${totalJobsAdded} tugas dokumen berhasil dimasukkan ke antrian untuk ${targetsProcessed.length} nomor tujuan.`,
@@ -347,8 +350,7 @@ router.get("/status", async (req, res) => {
   }
 });
 
-router.post('/update-profile', updateProfile);
+router.post("/update-profile", updateProfile);
 // 1. RUTE GET: Untuk menampilkan/merender halaman profil
-
 
 export default router;

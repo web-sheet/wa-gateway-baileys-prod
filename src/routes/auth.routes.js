@@ -14,6 +14,8 @@ router.get("/login", showLogin);
 router.post("/login",loginLimiter, login);
 
 router.get("/register", showRegister);
+
+
 router.post("/register", register);
 
 router.get("/logout", logout);

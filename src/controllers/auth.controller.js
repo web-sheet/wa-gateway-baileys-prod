@@ -16,9 +16,14 @@ export const showLogin = (req, res) => {
 };
 
 export const showRegister = (req, res) => {
-  res.render("auth/register");
-};
+  // Ambil data user dari session, atau default null jika belum login
+  const user = req.session.user || null;
 
+  // Kirim data user ke dalam file EJS auth/register
+  res.render("auth/register", { 
+    user: user,   path: req.path, 
+  });
+};
 export const register = async (req, res) => {
   const { username, password } = req.body;
 

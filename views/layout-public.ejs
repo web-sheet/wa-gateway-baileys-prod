@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title><%= typeof title !== 'undefined' ? title : 'Websheet Gateway - WhatsApp API Gateway & Otomatisasi' %></title>
+    <meta name="description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : 'Solusi integrasi Google Sheets dan AppSheet ke WhatsApp API secara otomatis, instan, dan aman.' %>">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+        <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/512/733/733585.png"
+    />
+    <style>
+      /* Mengikuti setelan global font size kecil (14px) agar proporsional */
+      html {
+        font-size: 14px;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top left, #25d36610, transparent 30%),
+          radial-gradient(circle at bottom right, #10b98110, transparent 30%),
+          #0f172a; /* Slate-900 */
+      }
+
+      /* Animasi halus saat halaman dimuat */
+      .page-transition {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(8px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+  <body class="text-slate-200 min-h-screen flex flex-col antialiased">
+
+    <nav class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          
+          <div class="flex items-center">
+            <a href="/" class="flex items-center gap-2.5 font-bold text-base text-white tracking-tight">
+              <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-900/30">
+                <i class="fa-solid fa-layer-group text-sm"></i>
+              </div>
+              <span>Websheet<span class="text-emerald-400">Gateway</span></span>
+            </a>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <a href="/blog" class="text-xs font-medium text-slate-300 hover:text-emerald-400 transition">
+              Blog
+            </a>
+                <a href="/" class="text-xs font-medium text-slate-300 hover:text-emerald-400 transition">
+              WA Gateway
+            </a>
+            <a href="/documentation" target="_blank" class="text-xs font-medium text-slate-300 hover:text-emerald-400 transition">
+              API Docs
+            </a>
+            
+            <span class="h-4 w-[1px] bg-slate-700"></span>
+
+            <% if (typeof user !== 'undefined' && user) { %>
+              <a href="/dashboard" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-4 py-2 rounded-xl border border-slate-700 transition">
+                Dashboard <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+              </a>
+            <% } else { %>
+              <a href="https://wa.me/62895415163173?text=Halo%20Admin,%20saya%20ingin%20tanya%20seputar%20layanan%20Websheet%20Gateway" 
+                 target="_blank"
+                 class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-md shadow-emerald-950/20">
+                Coba Demo
+              </a>
+            <% } %>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow page-transition">
+      <%- body %>
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-900 mt-20 py-8 text-center">
+      <div class="max-w-6xl mx-auto px-4 text-xs text-slate-500 space-y-2">
+        <p>&copy; <%= new Date().getFullYear() %> <strong>Websheet Gateway</strong>. Hak Cipta Dilindungi.</p>
+        <p class="text-[11px] text-slate-600">Platform ini tidak berafiliasi resmi dengan Meta Platforms Inc. atau WhatsApp Inc.</p>
+      </div>
+    </footer>
+
+  </body>
+</html>

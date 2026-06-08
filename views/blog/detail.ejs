@@ -1,0 +1,87 @@
+<article class="max-w-3xl mx-auto px-4 py-10">
+  
+  <div class="mb-4">
+    <a href="/blog" class="text-xs font-semibold text-emerald-400 uppercase tracking-wider hover:underline flex items-center gap-1">
+      <i class="fa-solid fa-arrow-left"></i> Kembali ke Blog
+    </a>
+  </div>
+
+  <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-100 leading-tight">
+    <%= article.title %>
+  </h1>
+
+  <div class="flex items-center gap-4 mt-4 pb-6 border-b border-slate-700/60 text-xs text-slate-400">
+    <div class="flex items-center gap-1.5">
+      <i class="fa-solid fa-user text-slate-500"></i>
+      <span>Oleh: <strong class="text-slate-300"><%= article.author.username %></strong></span>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <i class="fa-solid fa-calendar-days text-slate-500"></i>
+      <span><%= new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></span>
+    </div>
+  </div>
+
+  <div class="prose-custom mt-8 text-slate-300 leading-relaxed text-sm md:text-base space-y-4">
+    <%- article.content %>
+  </div>
+
+  <div class="mt-12 p-6 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/70 text-center shadow-xl">
+    <h3 class="text-lg font-bold text-slate-100">Tertarik Mencoba Integrasi Seperti di Atas?</h3>
+    <p class="text-xs text-slate-400 mt-1 max-w-lg mx-auto">
+      Hubungi tim teknis kami sekarang untuk mendapatkan akses <strong>Demo Gratis selama 7 Hari</strong> penuh. Tanpa biaya awal!
+    </p>
+    
+    <div class="mt-5">
+      <a href="https://wa.me/62895415163173?text=Halo%20Admin,%20saya%20tertarik%20mencoba%20demo%20Websheet%20Gateway%20setelah%20membaca%20artikel%20blog%20tentang:%20<%= encodeURIComponent(article.title) %>" 
+         target="_blank"
+         class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition shadow-lg shadow-emerald-950/20 cursor-pointer">
+        <i class="fa-brands fa-whatsapp text-lg"></i> Minta Akses Demo Gratis
+      </a>
+    </div>
+  </div>
+
+</article>
+
+<style>
+  /* Menghias output elemen HTML di dalam artikel agar rapi menggunakan font global */
+  .prose-custom h1, .prose-custom h2, .prose-custom h3 {
+    color: #f1f5f9; /* slate-200 */
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-custom h1 { font-size: 1.5rem; }
+  .prose-custom h2 { font-size: 1.3rem; border-left: 3px solid #10b981; padding-left: 8px; }
+  .prose-custom h3 { font-size: 1.1rem; }
+  
+  .prose-custom p {
+    margin-bottom: 1rem;
+    color: #cbd5e1; /* slate-300 */
+  }
+  
+  .prose-custom ul, .prose-custom ol {
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+  }
+  .prose-custom ul { list-style-type: disc; }
+  .prose-custom ol { list-style-type: decimal; }
+
+  /* Style khusus untuk blok kode/script tutorial */
+  .prose-custom pre {
+    background-color: #0f172a; /* slate-900 */
+    padding: 1rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #34d399; /* emerald-400 */
+    border: 1px solid #334155;
+    margin: 1rem 0;
+  }
+  
+  .prose-custom a {
+    color: #34d399;
+    text-decoration: underline;
+  }
+</style>

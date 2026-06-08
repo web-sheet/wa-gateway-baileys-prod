@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { User } from "../models/User.js";
 import rateLimit from "express-rate-limit";
+import  { Post } from "../models/Post.js";  
 
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -11,8 +12,21 @@ export const loginLimiter = rateLimit({
   },
 });
 
-export const showLogin = (req, res) => {
-  res.render("auth/login", {layout: false});
+export const showLogin = async (req, res) => {
+  try {
+    // Ambil 1 artikel terbaru untuk info update di halaman login
+    const latestArticle = await Post.findOne({ status: "published" })
+                                    .sort({ createdAt: -1 });
+
+    res.render("auth/login", { 
+      layout: false,
+      latestArticle // Kirim data ke view auth/login.ejs
+    });
+  } catch (error) {
+    console.error("Gagal memuat halaman login:", error);
+    // Jika database error, tetap render halaman login agar user tidak terganggu
+    res.render("auth/login", { layout: false, latestArticle: null });
+  }
 };
 
 export const showRegister = (req, res) => {

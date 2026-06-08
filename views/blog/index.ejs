@@ -1,0 +1,113 @@
+<div class="max-w-6xl mx-auto px-4 py-12">
+
+  <div class="text-center max-w-2xl mx-auto mb-16">
+    <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">
+      Edukasi & Panduan
+    </span>
+    <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight mt-3">
+      Websheet Gateway <span class="text-emerald-400">Blog</span>
+    </h1>
+    <p class="text-sm text-slate-400 mt-3 leading-relaxed">
+      Temukan tutorial praktis, tips menghindari blokir, dan cara mengotomatiskan bisnis Anda menggunakan WhatsApp API dan Google Sheets.
+    </p>
+  </div>
+
+  <% if (articles.length === 0) { %>
+    <div class="text-center py-20 bg-slate-800/30 rounded-2xl border border-slate-800 border-dashed max-w-md mx-auto">
+      <i class="fa-regular fa-folder-open text-3xl text-slate-600 mb-3"></i>
+      <p class="text-sm text-slate-400 font-medium">Belum ada artikel yang diterbitkan.</p>
+      <p class="text-xs text-slate-500 mt-1">Nantikan panduan menarik dari kami segera!</p>
+    </div>
+  <% } else { %>
+
+    <!-- Grid Kartu Artikel -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% articles.forEach(article => { %>
+        <div class="bg-slate-800/60 border border-slate-700/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl hover:border-emerald-500/30 transition duration-300 flex flex-col group">
+          
+          <div class="p-6 flex-grow flex flex-col">
+            <div class="flex items-center gap-3 text-[11px] text-slate-400 mb-3">
+              <span class="flex items-center gap-1">
+                <i class="fa-regular fa-calendar text-slate-500"></i>
+                <%= new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+              </span>
+              <span class="w-1 h-1 bg-slate-600 rounded-full"></span>
+              <span class="flex items-center gap-1">
+                <i class="fa-regular fa-user text-slate-500"></i>
+                <%= article.author.username %>
+              </span>
+            </div>
+
+            <h2 class="text-base font-bold text-slate-100 group-hover:text-emerald-400 transition duration-200 line-clamp-2 leading-snug">
+              <a href="/blog/<%= article.slug %>">
+                <%= article.title %>
+              </a>
+            </h2>
+
+            <p class="text-xs text-slate-400 mt-2.5 line-clamp-3 leading-relaxed flex-grow">
+              <%= article.metaDesc %>
+            </p>
+
+            <div class="pt-5 mt-auto border-t border-slate-700/40 flex justify-end">
+              <a href="/blog/<%= article.slug %>" class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition group-hover:translate-x-1 duration-200">
+                Baca Selengkapnya <i class="fa-solid fa-chevron-right text-[9px]"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- 🌐 Komponen Paginasi -->
+    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+      <div class="mt-14 flex items-center justify-center gap-2">
+        
+        <!-- Tombol Sebelumnya -->
+        <% if (currentPage > 1) { %>
+          <a href="/blog?page=<%= currentPage - 1 %>" 
+             class="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-700 bg-slate-800/40 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition shadow-md flex items-center gap-1.5">
+            <i class="fa-solid fa-chevron-left text-[10px]"></i> Sebelumnya
+          </a>
+        <% } else { %>
+          <span class="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-800/60 bg-slate-900/40 text-slate-600 cursor-not-allowed flex items-center gap-1.5">
+            <i class="fa-solid fa-chevron-left text-[10px]"></i> Sebelumnya
+          </span>
+        <% } %>
+
+        <!-- Angka Halaman -->
+        <div class="flex items-center gap-1.5 mx-1">
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+              <!-- Halaman Saat Ini -->
+              <span class="w-9 h-9 flex items-center justify-center text-xs font-bold rounded-xl bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20">
+                <%= i %>
+              </span>
+            <% } else { %>
+              <!-- Halaman Lainnya -->
+              <a href="/blog?page=<%= i %>" 
+                 class="w-9 h-9 flex items-center justify-center text-xs font-semibold rounded-xl border border-slate-700 bg-slate-800/40 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition">
+                <%= i %>
+              </a>
+            <% } %>
+          <% } %>
+        </div>
+
+        <!-- Tombol Selanjutnya -->
+        <% if (currentPage < totalPages) { %>
+          <a href="/blog?page=<%= currentPage + 1 %>" 
+             class="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-700 bg-slate-800/40 text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition shadow-md flex items-center gap-1.5">
+            Selanjutnya <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </a>
+        <% } else { %>
+          <span class="px-4 py-2.5 text-xs font-semibold rounded-xl border border-slate-800/60 bg-slate-900/40 text-slate-600 cursor-not-allowed flex items-center gap-1.5">
+            Selanjutnya <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </span>
+        <% } %>
+
+      </div>
+    <% } %>
+
+  <% } %>
+
+</div>

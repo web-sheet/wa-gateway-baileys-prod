@@ -14,6 +14,8 @@ import http from "http";
 import { initSocket } from "./wa/socket/io.js";
 import { restoreSessions } from "./wa/wa.js";
 import expressLayouts from "express-ejs-layouts";
+import blogRoutes from "./routes/blogRoutes.js";
+
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -45,6 +47,7 @@ app.use(userRoutes);
 app.use(logRoutes);
 app.use(autoreplyRoutes);
 app.use(contactRoutes);
+app.use(blogRoutes);
 
 app.use("/api", apiRoutes);
 app.use((req, res, next) => {

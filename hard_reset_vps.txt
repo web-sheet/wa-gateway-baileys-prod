@@ -1,0 +1,14 @@
+Bash
+# 1. Batalkan perubahan lokal di VPS agar tidak bentrok
+git reset --hard HEAD
+
+# 2. Ambil informasi dari repo GitHub yang baru
+git fetch origin
+
+# 3. Paksa folder VPS mengikuti branch main dari GitHub baru
+git reset --hard origin/main
+
+# ubah origin
+Bash
+git remote set-url origin PASTE_URL_GITHUB_YANG_KAMU_COPY_TADI
+git remote -v

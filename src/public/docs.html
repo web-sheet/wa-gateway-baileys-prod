@@ -31,77 +31,150 @@
       }
     </style>
   </head>
- 
-<body class="bg-gray-50 font-sans text-gray-800">
 
-  <div class="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-50">
-    <h1 class="text-lg font-bold text-emerald-600 flex items-center gap-2">
-      <span>🟢</span> WS Gateway
-    </h1>
-    <button id="hamburgerBtn" class="p-2 rounded-md hover:bg-gray-100 text-gray-600 focus:outline-none">
-      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
-  </div>
-
-  <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"></div>
-
-  <div class="flex min-h-screen">
-    
-    <aside
-      id="sidebarMenu"
-      class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 p-6 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col justify-between shrink-0 hidden"
+  <body class="bg-gray-50 font-sans text-gray-800">
+    <div
+      class="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-50"
     >
-      <div>
-        <div class="mb-8 flex items-center justify-between">
-          <div>
-            <h1 class="text-xl font-bold text-emerald-600 flex items-center gap-2">
-              <span>🟢</span> WS Gateway
-            </h1>
-            <p class="text-xs text-gray-500 mt-1">v1.2.0 (Bot Webhook Enabled)</p>
+      <h1 class="text-lg font-bold text-emerald-600 flex items-center gap-2">
+        <span>🟢</span> WS Gateway
+      </h1>
+      <button
+        id="hamburgerBtn"
+        class="p-2 rounded-md hover:bg-gray-100 text-gray-600 focus:outline-none"
+      >
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div
+      id="sidebarOverlay"
+      class="hidden fixed inset-0 bg-black/40 z-40 md:hidden"
+    ></div>
+
+    <div class="flex min-h-screen">
+      <aside
+        id="sidebarMenu"
+        class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 p-6 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:flex flex-col justify-between shrink-0 hidden"
+      >
+        <div>
+          <div class="mb-8 flex items-center justify-between">
+            <div>
+              <h1
+                class="text-xl font-bold text-emerald-600 flex items-center gap-2"
+              >
+                <span>🟢</span> WS Gateway
+              </h1>
+              <p class="text-xs text-gray-500 mt-1">
+                v1.2.0 (Bot Webhook Enabled)
+              </p>
+            </div>
+            <button
+              id="closeSidebarBtn"
+              class="md:hidden p-1 text-gray-400 hover:text-gray-600 focus:outline-none"
+            >
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
-          <button id="closeSidebarBtn" class="md:hidden p-1 text-gray-400 hover:text-gray-600 focus:outline-none">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+
+          <nav class="space-y-2 overflow-y-auto max-h-[calc(100vh-120px)] pr-1">
+            <a
+              href="/dashboard"
+              class="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition font-medium border border-slate-200 shadow-xs mb-6"
+            >
+              ⬅️ Back to Dashboard
+            </a>
+
+            <p
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2"
+            >
+              Authentication
+            </p>
+            <a
+              href="#auth"
+              class="mobile-link block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
+              >API Headers</a
+            >
+
+            <p
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2"
+            >
+              Outbound Endpoints
+            </p>
+            <a
+              href="#send-text"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium"
+              >✉️ Kirim Teks</a
+            >
+            <a
+              href="#send-image"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium"
+              >🖼️ Kirim Gambar</a
+            >
+            <a
+              href="#send-doc"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium"
+              >📄 Kirim Dokumen</a
+            >
+
+            <p
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2"
+            >
+              Inbound Integration
+            </p>
+            <a
+              href="#webhook-receive"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md font-medium"
+              >📥 Terima Pesan (Webhook)</a
+            >
+            <a
+              href="#bot-autoreply"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md font-medium"
+              >🤖 Bot Autoreply (Internal)</a
+            >
+
+            <p
+              class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2"
+            >
+              Automations & Features
+            </p>
+            <a
+              href="#schedule-message"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-md font-medium"
+              >⏰ Kirim Pesan Terjadwal</a
+            >
+            <a
+              href="#schedule-status"
+              class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-md font-medium"
+              >🚀 Status WA Terjadwal</a
+            >
+          </nav>
         </div>
-
-        <nav class="space-y-2 overflow-y-auto max-h-[calc(100vh-120px)] pr-1">
-          <a
-            href="/dashboard"
-            class="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition font-medium border border-slate-200 shadow-xs mb-6"
-          >
-            ⬅️ Back to Dashboard
-          </a>
-
-          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-            Authentication
-          </p>
-          <a href="#auth" class="mobile-link block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md">API Headers</a>
-
-          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">
-            Outbound Endpoints
-          </p>
-          <a href="#send-text" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium">✉️ Kirim Teks</a>
-          <a href="#send-image" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium">🖼️ Kirim Gambar</a>
-          <a href="#send-doc" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-md font-medium">📄 Kirim Dokumen</a>
-
-          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">
-            Inbound Integration
-          </p>
-          <a href="#webhook-receive" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md font-medium">📥 Terima Pesan (Webhook)</a>
-          <a href="#bot-autoreply" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-md font-medium">🤖 Bot Autoreply (Internal)</a>
-
-          <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-6 mb-2">
-            Automations & Features
-          </p>
-          <a href="#schedule-message" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-md font-medium">⏰ Kirim Pesan Terjadwal</a>
-          <a href="#schedule-status" class="mobile-link block px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-md font-medium">🚀 Status WA Terjadwal</a>
-        </nav>
-      </div>
-    </aside>
+      </aside>
 
       <main class="flex-1 p-6 md:p-12 overflow-y-auto">
         <section class="mb-12 border-b border-gray-200 pb-6">
@@ -111,8 +184,13 @@
           <p class="mt-2 text-base text-gray-600">
             Selamat datang di dokumentasi API WebSheet Gateway. Seluruh
             pengiriman pesan via API di bawah ini menggunakan
-            <b>Sistem Antrian Otomatis (Queue System)</b> berbasis RAM per-user
-            dengan jeda aman 4 detik untuk menjaga reputasi nomor Anda.
+            <b>Sistem Antrian Otomatis (Queue System)</b> berbasis RAM per-user.
+            Sistem secara standar menerapkan jeda acak aman (default 4–8 detik)
+            untuk menjaga reputasi nomor Anda, namun Anda juga dapat menentukan
+            kontrol jeda kustom secara fleksibel menggunakan parameter
+            <code class="bg-gray-100 px-1 rounded text-xs">delayMin</code> dan
+            <code class="bg-gray-100 px-1 rounded text-xs">delayMax</code> pada
+            setiap rute pengiriman.
           </p>
         </section>
 
@@ -166,7 +244,7 @@
               class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wider"
               >POST</span
             >
-            <h3 class="text-xl font-bold text-gray-900 font-mono">/send</h3>
+            <h3 class="text-xl font-bold text-gray-900 font-mono">/api/send</h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
             Digunakan untuk mengirim satu atau banyak pesan teks sekaligus ke
@@ -180,7 +258,9 @@
           </h4>
           <pre><code>{
   "number": "628123456789", // Bisa berupa String tunggal, atau Array: ["628123", "628567"]
-  "message": "Halo, ini contoh pesan teks otomatis."
+  "message": "Halo, ini contoh pesan teks otomatis.",
+  "delayMin": 2,            // Opsional (detik): Jeda minimal acak antar pesan (Default: 4)
+  "delayMax": 6             // Opsional (detik): Jeda maksimal acak antar pesan (Default: 8)
 }</code></pre>
 
           <h4
@@ -203,7 +283,7 @@
               >POST</span
             >
             <h3 class="text-xl font-bold text-gray-900 font-mono">
-              /send-image
+              /api/send-image
             </h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
@@ -229,7 +309,9 @@
       "url": "https://docs.google.com/uc?export=download&id=DRIVE_FILE_ID", // Contoh Google Drive Direct Link
       "caption": "Foto Produk dari Google Drive"
     }
-  ]
+  ],
+  "delayMin": 2,            // Opsional (detik): Jeda minimal acak antar broadcast (Default: 4)
+  "delayMax": 6             // Opsional (detik): Jeda maksimal acak antar broadcast (Default: 8)
 }</code></pre>
 
           <h4
@@ -264,12 +346,13 @@
               >POST</span
             >
             <h3 class="text-xl font-bold text-gray-900 font-mono">
-              /send-document
+              /api/send-document
             </h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Digunakan untuk mengirim satu atau banyak berkas dokumen sekaligus (seperti PDF, Excel, dsb)
-            secara massal ke banyak nomor tujuan dalam satu antrian (Multi-Document Broadcast).
+            Digunakan untuk mengirim satu atau banyak berkas dokumen sekaligus
+            (seperti PDF, Excel, dsb) secara massal ke banyak nomor tujuan dalam
+            satu antrian (Multi-Document Broadcast).
           </p>
 
           <h4
@@ -290,7 +373,9 @@
       "fileName": "Syarat_Ketentuan.pdf",
       "caption": "Dokumen pelengkap syarat & ketentuan."
     }
-  ]
+  ],
+  "delayMin": 2,            // Opsional (detik): Jeda minimal acak antar pengiriman dokumen (Default: 4)
+  "delayMax": 6             // Opsional (detik): Jeda maksimal acak antar pengiriman dokumen (Default: 8)
 }</code></pre>
 
           <h4
@@ -319,11 +404,26 @@
             </h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Jika Anda mengonfigurasi <b>Webhook Bot URL</b> di dashboard, server kami akan otomatis mem-forward (meneruskan) setiap obrolan teks umum masuk dari klien menggunakan metode <code class="bg-gray-100 text-slate-800 px-1 rounded text-xs">POST</code> ke URL server Anda.
+            Jika Anda mengonfigurasi <b>Webhook Bot URL</b> di dashboard, server
+            kami akan otomatis mem-forward (meneruskan) setiap obrolan teks umum
+            masuk dari klien menggunakan metode
+            <code class="bg-gray-100 text-slate-800 px-1 rounded text-xs"
+              >POST</code
+            >
+            ke URL server Anda.
           </p>
 
-          <p class="text-xs font-medium text-amber-600 bg-amber-50 p-3 rounded border border-amber-200 my-3">
-            💡 <b>Sistem Proteksi:</b> Pesan lokasi dan pesan yang diawali dengan prefiks akuntansi resmi (<code class="bg-amber-100/50 px-1 rounded font-mono">/d</code>, <code class="bg-amber-100/50 px-1 rounded font-mono">/add</code>, <code class="bg-amber-100/50 px-1 rounded font-mono">Paid</code>, dll) <b>tidak akan ikut dikirim</b> ke webhook ini demi menghindari bentrokan fungsi bot Anda.
+          <p
+            class="text-xs font-medium text-amber-600 bg-amber-50 p-3 rounded border border-amber-200 my-3"
+          >
+            💡 <b>Sistem Proteksi:</b> Pesan lokasi dan pesan yang diawali
+            dengan prefiks akuntansi resmi (<code
+              class="bg-amber-100/50 px-1 rounded font-mono"
+              >/d</code
+            >, <code class="bg-amber-100/50 px-1 rounded font-mono">/add</code>,
+            <code class="bg-amber-100/50 px-1 rounded font-mono">Paid</code>,
+            dll) <b>tidak akan ikut dikirim</b> ke webhook ini demi menghindari
+            bentrokan fungsi bot Anda.
           </p>
 
           <h4
@@ -356,24 +456,47 @@
         <!-- 🤖 SEKSI BARU: BOT AUTOREPLY INTERNAL -->
         <section id="bot-autoreply" class="mb-16 scroll-mt-6">
           <div class="flex items-center gap-3 mb-4">
-            <span class="method-feature px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">FITUR INTERNAL</span>
-            <h3 class="text-xl font-bold text-gray-900 font-mono">Autoreply Engine</h3>
+            <span
+              class="method-feature px-3 py-1 rounded text-xs font-bold uppercase tracking-wider"
+              >FITUR INTERNAL</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">
+              Autoreply Engine
+            </h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Mesin penjawab otomatis internal yang bekerja secara asinkron mendeteksi pesan masuk berdasarkan kata kunci (*keyword*) yang telah Anda konfigurasikan di Dashboard tanpa memerlukan server tambahan.
+            Mesin penjawab otomatis internal yang bekerja secara asinkron
+            mendeteksi pesan masuk berdasarkan kata kunci (*keyword*) yang telah
+            Anda konfigurasikan di Dashboard tanpa memerlukan server tambahan.
           </p>
 
-          <div class="bg-white p-5 rounded-lg border border-gray-200 shadow-xs space-y-4">
-            <h4 class="text-sm font-bold text-gray-800">Mekanisme Pencocokan Kata Kunci (Match Type):</h4>
+          <div
+            class="bg-white p-5 rounded-lg border border-gray-200 shadow-xs space-y-4"
+          >
+            <h4 class="text-sm font-bold text-gray-800">
+              Mekanisme Pencocokan Kata Kunci (Match Type):
+            </h4>
             <ul class="list-disc pl-5 text-sm text-gray-600 space-y-2">
-              <li><b>Tepat (Equal):</b> Pesan pemicu harus sama persis 100% dengan kata kunci (Abaikan huruf besar/kecil).</li>
-              <li><b>Mengandung (Contains):</b> Respons akan terpicu jika kalimat pesan menyertakan kata kunci tersebut di posisi mana saja.</li>
+              <li>
+                <b>Tepat (Equal):</b> Pesan pemicu harus sama persis 100% dengan
+                kata kunci (Abaikan huruf besar/kecil).
+              </li>
+              <li>
+                <b>Mengandung (Contains):</b> Respons akan terpicu jika kalimat
+                pesan menyertakan kata kunci tersebut di posisi mana saja.
+              </li>
             </ul>
 
-            <h4 class="text-sm font-bold text-gray-800 mt-4">Aturan Batasan & Penundaan keamanan:</h4>
-            <div class="text-xs bg-slate-100 p-3 rounded text-slate-700 font-mono">
-              - Delay Balasan: Ditunda acak selama 2-4 detik untuk mensimulasikan ketikan manusia.<br>
-              - Status Deteksi: Otomatis memicu indikator "typing..." (sedang mengetik) pada chat pengirim sebelum membalas.
+            <h4 class="text-sm font-bold text-gray-800 mt-4">
+              Aturan Batasan & Penundaan keamanan:
+            </h4>
+            <div
+              class="text-xs bg-slate-100 p-3 rounded text-slate-700 font-mono"
+            >
+              - Delay Balasan: Ditunda acak selama 2-4 detik untuk
+              mensimulasikan ketikan manusia.<br />
+              - Status Deteksi: Otomatis memicu indikator "typing..." (sedang
+              mengetik) pada chat pengirim sebelum membalas.
             </div>
           </div>
         </section>
@@ -383,14 +506,25 @@
         <!-- ⏰ SEKSI BARU: KIRIM PESAN TERJADWAL -->
         <section id="schedule-message" class="mb-16 scroll-mt-6">
           <div class="flex items-center gap-3 mb-4">
-            <span class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">POST</span>
-            <h3 class="text-xl font-bold text-gray-900 font-mono">/dashboard/scheduled/send</h3>
+            <span
+              class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wider"
+              >POST</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">
+              /dashboard/scheduled/send
+            </h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Digunakan oleh modul internal dashboard untuk merencanakan dan mengamankan pengiriman pesan teks maupun media di waktu spesifik masa depan menggunakan sistem CRON Worker internal.
+            Digunakan oleh modul internal dashboard untuk merencanakan dan
+            mengamankan pengiriman pesan teks maupun media di waktu spesifik
+            masa depan menggunakan sistem CRON Worker internal.
           </p>
 
-          <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"> Struktur Form / Objek Penyimpanan</h4>
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+          >
+            Struktur Form / Objek Penyimpanan
+          </h4>
           <pre><code>{
   "title": "Pengingat Iuran Bulanan",      // Label pengenal tugas jadwal
   "number": "628998877665",                // Nomor tujuan tunggal atau grup ID
@@ -399,10 +533,18 @@
   "repeatType": "once"                     // Opsi Perulangan: once (sekali), daily (harian), weekly (mingguan)
 }</code></pre>
 
-          <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2">Manajemen Siklus Hidup Status (Lifecycle):</h4>
-          <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg">
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2"
+          >
+            Manajemen Siklus Hidup Status (Lifecycle):
+          </h4>
+          <div
+            class="overflow-x-auto bg-white border border-gray-200 rounded-lg"
+          >
             <table class="w-full text-left text-sm text-gray-600">
-              <thead class="bg-gray-50 text-gray-700 font-medium border-b border-gray-200">
+              <thead
+                class="bg-gray-50 text-gray-700 font-medium border-b border-gray-200"
+              >
                 <tr>
                   <th class="px-4 py-2">Status</th>
                   <th class="px-4 py-2">Keterangan Kerja</th>
@@ -410,16 +552,32 @@
               </thead>
               <tbody class="divide-y divide-gray-200">
                 <tr>
-                  <td class="px-4 py-2 font-mono text-amber-600 font-bold">scheduled</td>
-                  <td class="px-4 py-2">Tugas berhasil disimpan dan sedang menunggu waktu eksekusi tiba.</td>
+                  <td class="px-4 py-2 font-mono text-amber-600 font-bold">
+                    scheduled
+                  </td>
+                  <td class="px-4 py-2">
+                    Tugas berhasil disimpan dan sedang menunggu waktu eksekusi
+                    tiba.
+                  </td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-2 font-mono text-blue-600 font-bold">running</td>
-                  <td class="px-4 py-2">Sistem sedang memproses pengiriman ke antrean WhatsApp. Tugas terkunci dari aksi modifikasi/hapus.</td>
+                  <td class="px-4 py-2 font-mono text-blue-600 font-bold">
+                    running
+                  </td>
+                  <td class="px-4 py-2">
+                    Sistem sedang memproses pengiriman ke antrean WhatsApp.
+                    Tugas terkunci dari aksi modifikasi/hapus.
+                  </td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-2 font-mono text-emerald-600 font-bold">completed</td>
-                  <td class="px-4 py-2">Pesan sukses diteruskan ke nomor tujuan. Jika tipe perulangan aktif, waktu eksekusi otomatis diperbarui ke jadwal berikutnya.</td>
+                  <td class="px-4 py-2 font-mono text-emerald-600 font-bold">
+                    completed
+                  </td>
+                  <td class="px-4 py-2">
+                    Pesan sukses diteruskan ke nomor tujuan. Jika tipe
+                    perulangan aktif, waktu eksekusi otomatis diperbarui ke
+                    jadwal berikutnya.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -429,17 +587,33 @@
         <!-- 🚀 SEKSI BARU: STATUS TERJADWAL -->
         <section id="schedule-status" class="mb-16 scroll-mt-6">
           <div class="flex items-center gap-3 mb-4">
-            <span class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">POST / DELETE</span>
-            <h3 class="text-xl font-bold text-gray-900 font-mono">/dashboard/scheduled-status</h3>
+            <span
+              class="method-post px-3 py-1 rounded text-xs font-bold uppercase tracking-wider"
+              >POST / DELETE</span
+            >
+            <h3 class="text-xl font-bold text-gray-900 font-mono">
+              /dashboard/scheduled-status
+            </h3>
           </div>
           <p class="text-sm text-gray-600 mb-4">
-            Modul otomasi khusus untuk mengunggah Cerita/Story WhatsApp (Status WA) secara terjadwal. Mendukung format berbasis teks murni ataupun gambar multimedia lengkap beserta takarir (*caption*).
+            Modul otomasi khusus untuk mengunggah Cerita/Story WhatsApp (Status
+            WA) secara terjadwal. Mendukung format berbasis teks murni ataupun
+            gambar multimedia lengkap beserta takarir (*caption*).
           </p>
 
-          <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">1. Membuat Jadwal Status Baru (Multipart Form-Data)</h4>
-          <div class="bg-slate-100 p-3 rounded font-mono text-xs text-slate-800 mb-2">
-            <b>Endpoint:</b> <code class="text-red-600">/dashboard/scheduled-status/send</code> <br>
-            <b>Content-Type:</b> <code class="text-indigo-600">multipart/form-data</code>
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+          >
+            1. Membuat Jadwal Status Baru (Multipart Form-Data)
+          </h4>
+          <div
+            class="bg-slate-100 p-3 rounded font-mono text-xs text-slate-800 mb-2"
+          >
+            <b>Endpoint:</b>
+            <code class="text-red-600">/dashboard/scheduled-status/send</code>
+            <br />
+            <b>Content-Type:</b>
+            <code class="text-indigo-600">multipart/form-data</code>
           </div>
           <pre><code>Form Fields:
 - title       : "Promo Banner Hari Senin" (Text)
@@ -448,23 +622,45 @@
 - scheduledAt : "2026-06-12T10:00" (Datetime-local)
 - statusImage : [File Binary] (Opsional, File Gambar .jpg/.png)</code></pre>
 
-          <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2">2. Menghapus Antrean Jadwal Status via AJAX Fetch</h4>
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-6 mb-2"
+          >
+            2. Menghapus Antrean Jadwal Status via AJAX Fetch
+          </h4>
           <p class="text-sm text-gray-600 mb-2">
-            Pengguna dapat membatalkan antrean jadwal status yang belum dieksekusi menggunakan fungsi penembakan API asinkron dari sisi klien.
+            Pengguna dapat membatalkan antrean jadwal status yang belum
+            dieksekusi menggunakan fungsi penembakan API asinkron dari sisi
+            klien.
           </p>
-          <div class="bg-slate-100 p-3 rounded font-mono text-xs text-slate-800 mb-2">
-            <b>Endpoint:</b> <code class="text-red-600">/dashboard/scheduled-status/delete/:id</code> <br>
+          <div
+            class="bg-slate-100 p-3 rounded font-mono text-xs text-slate-800 mb-2"
+          >
+            <b>Endpoint:</b>
+            <code class="text-red-600"
+              >/dashboard/scheduled-status/delete/:id</code
+            >
+            <br />
             <b>Method:</b> <code class="text-red-600">DELETE</code>
           </div>
-          
-          <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2">Response JSON Pembatalan (200 OK)</h4>
+
+          <h4
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4 mb-2"
+          >
+            Response JSON Pembatalan (200 OK)
+          </h4>
           <pre><code class="text-emerald-400">{
   "success": true,
   "message": "Jadwal status WhatsApp berhasil dihapus secara permanen."
 }</code></pre>
 
-          <p class="text-xs font-medium text-red-600 bg-red-50 p-3 rounded border border-red-200 mt-4">
-            🛡️ <b>Aturan Keamanan Transaksi:</b> Tombol aksi hapus akan otomatis ter-<i>disabled</i> secara sistem di antarmuka jika tugas berstatus <code class="bg-red-100 px-1 rounded font-mono">running</code> demi menghindari kegagalan sinkronisasi dan kerusakan struktur daur hidup memori pengiriman Baileys Core.
+          <p
+            class="text-xs font-medium text-red-600 bg-red-50 p-3 rounded border border-red-200 mt-4"
+          >
+            🛡️ <b>Aturan Keamanan Transaksi:</b> Tombol aksi hapus akan otomatis
+            ter-<i>disabled</i> secara sistem di antarmuka jika tugas berstatus
+            <code class="bg-red-100 px-1 rounded font-mono">running</code> demi
+            menghindari kegagalan sinkronisasi dan kerusakan struktur daur hidup
+            memori pengiriman Baileys Core.
           </p>
         </section>
       </main>

@@ -20,7 +20,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // 🎯 FUNGSI BARU: Menghasilkan angka acak antara min dan max (dalam Milidetik)
 const getRandomDelay = (minSeconds, maxSeconds) => {
   const min = parseInt(minSeconds || 4) * 1000; // Default min 4 detik jika kosong
-  const max = parseInt(maxSeconds || 4) * 1000; // Default max 4 detik jika kosong
+  const max = parseInt(maxSeconds || 8) * 1000; // Default max 4 detik jika kosong
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 

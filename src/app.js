@@ -37,6 +37,8 @@ app.set("layout", "layout");
 app.use(express.urlencoded({ extended: false }));
 app.use(sessionConfig);
 
+app.set("trust proxy", 1);
+
 app.use(authRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
@@ -50,9 +52,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// ROOT PAGE
+app.get("/", (req, res) => {
+  // Cek apakah ada data session user yang aktif
+  if (req.session && req.session.user) {
+    // Jika sudah login, langsung lempar ke dashboard
+    return res.redirect("/dashboard");
+  }
+
+  // Jika belum login, lempar ke halaman login
+  res.redirect("/login");
+});
 
 https: app.get("/documentation", (req, res) => {
-  
   res.sendFile(path.join(__dirname, "public", "docs.html"));
 });
 

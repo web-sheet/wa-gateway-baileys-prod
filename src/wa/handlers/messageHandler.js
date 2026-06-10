@@ -2,6 +2,10 @@
 import { saveBotReplyLog } from "../../helpers/botLogHelper.js";
 
 export async function handleLocationMessage(sock, msg, from, user) {
+  const sender = msg.key.remoteJidAlt?.replace("@s.whatsapp.net", "");
+
+  console.log(sender);
+
   // 🔍 1. TANGKAP INPUT (Bisa lokasi biasa atau live location)
   const isLive = !!msg.message?.liveLocationMessage;
   const rawLocation =
@@ -23,13 +27,14 @@ export async function handleLocationMessage(sock, msg, from, user) {
 
   // 3. Tentukan JID Mentah Pengirim
   let rawJid = from;
+
   if (from.endsWith("@g.us")) {
     rawJid = msg.key.participant || from;
   } else if (from.endsWith("@lid")) {
     rawJid = msg.key.participant || msg.participant || from;
   }
 
-  let sender = rawJid.split("@")[0];
+  // let sender = rawJid.split("@")[0];
 
   // 🔍 4. JIKA TERDETEKSI @LID, PAKSA BAILEYS MENERJEMAHKAN KE NOMOR ASLI
   if (rawJid.endsWith("@lid")) {
@@ -42,7 +47,7 @@ export async function handleLocationMessage(sock, msg, from, user) {
         contactInfo.jid &&
         contactInfo.jid.endsWith("@s.whatsapp.net")
       ) {
-        sender = contactInfo.jid.split("@")[0];
+        // sender = contactInfo.jid.split("@")[0];
       }
     } catch (err) {
       console.log("[LID BYPASS] Gagal menerjemahkan LID secara otomatis.");
@@ -85,6 +90,15 @@ export async function handleLocationMessage(sock, msg, from, user) {
       if (data.response) {
         const replyText = data.response.replace(/\\n/g, "\n");
 
+        // tampilkan typing
+        await sock.sendPresenceUpdate("composing", from);
+
+        // opsional: delay biar terlihat natural
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        // hentikan typing
+        await sock.sendPresenceUpdate("paused", from);
+
         const result = await sock.sendMessage(
           from,
           {
@@ -95,9 +109,8 @@ export async function handleLocationMessage(sock, msg, from, user) {
           },
         );
 
-        // 2. 🟢 LOG DI SINI: Catat ke DB menggunakan objek 'user' dari parameter
         if (user) {
-          await saveBotReplyLog(user._id, from, replyText, result);
+          await saveBotReplyLog(user._id, sender, replyText, result);
         }
       }
     } catch (error) {

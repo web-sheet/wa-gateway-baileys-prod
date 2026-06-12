@@ -105,6 +105,8 @@ export async function initWA(userId) {
   sock.ev.on("connection.update", async (update) => {
     const { qr, connection, lastDisconnect } = update;
 
+    const currentPhone = sock.user?.id?.split(":")[0]?.replace("@s.whatsapp.net", "") || "unknown";
+
     if (qr) {
       console.log("QR generated for:", userId);
       const qrDataUrl = await qrcode.toDataURL(qr);

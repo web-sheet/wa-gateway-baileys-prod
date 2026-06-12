@@ -1,6 +1,6 @@
 
 #ada tambahan ternyata
 git add .
-git commit -m "penambahan notif koneksi"
+git commit -m "penambahan notif koneksi 2"
 git push origin main
  

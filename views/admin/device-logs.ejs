@@ -1,0 +1,230 @@
+<div class="lg:ml-72 p-6 mx-auto">
+
+  <div class="mb-8">
+    <h2 class="text-3xl font-bold flex items-center gap-3 text-white">
+      <i class="fa-solid fa-server text-emerald-500 text-2xl"></i> WhatsApp Device Connection Logs
+    </h2>
+    <p class="text-slate-400 mt-2">
+      Memantau rekam jejak aktivitas status koneksi (Putus/Nyambung) seluruh perangkat WhatsApp Gateway beserta rincian alasannya.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 gap-6">
+
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2 text-slate-200">
+          <i class="fa-solid fa-clock-rotate-left text-sm text-slate-400"></i> Riwayat Aktivitas Perangkat
+        </h2>
+        
+        <div class="flex flex-wrap items-center gap-3">
+          <input 
+            type="text" 
+            id="logSearch" 
+            placeholder="Cari nomor / username..." 
+            class="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 transition w-full sm:w-64"
+          />
+          <select 
+            id="statusFilter" 
+            class="bg-slate-900 border border-white/10 rounded-xl px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer"
+          >
+            <option value="all">Semua Status</option>
+            <option value="connected">Connected</option>
+            <option value="disconnected">Disconnected</option>
+            <option value="connecting">Connecting</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-white/10 text-slate-400 font-medium">
+              <th class="py-3 text-left">Waktu Kejadian</th>
+              <th class="py-3 text-left">Akun Pengguna</th>
+              <th class="py-3 text-left">Nomor WhatsApp</th>
+              <th class="py-3 text-center">Status</th>
+              <th class="py-3 text-left pl-4">Alasan / Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="logTableBody" class="divide-y divide-white/10">
+
+            <% if (logs.length === 0) { %>
+              <tr class="no-data-row">
+                <td colspan="5" class="py-12 text-center text-slate-500">
+                  <i class="fa-solid fa-folder-open text-3xl mb-2 block text-slate-600"></i>
+                  Belum ada rekaman riwayat log perangkat saat ini.
+                </td>
+              </tr>
+            <% } %>
+
+            <% logs.forEach(log => { %>
+              <tr class="log-row hover:bg-white/[0.02] transition" 
+                  data-status="<%= log.status %>"
+                  data-search="<%= (log.userId?.username || '').toLowerCase() %> <%= log.waNumber %>">
+                
+                <td class="py-4 text-slate-400 font-mono text-xs">
+                  <%= new Date(log.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) %>
+                </td>
+
+                <td class="py-4 font-medium text-slate-200">
+                  <%= log.userId?.username || 'User Terhapus' %>
+                </td>
+
+                <td class="py-4 text-slate-300 font-mono">
+                  <%= log.waNumber %>
+                </td>
+
+                <td class="py-4 text-center">
+                  <% if (log.status === 'connected') { %>
+                    <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20">
+                      <i class="fa-solid fa-circle text-[8px] mr-1 align-middle"></i> Connected
+                    </span>
+                  <% } else if (log.status === 'disconnected') { %>
+                    <span class="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold border border-red-500/20">
+                      <i class="fa-solid fa-circle text-[8px] mr-1 align-middle"></i> Disconnected
+                    </span>
+                  <% } else { %>
+                    <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-semibold border border-amber-500/20">
+                      <i class="fa-solid fa-circle text-[8px] mr-1 align-middle"></i> Connecting
+                    </span>
+                  <% } %>
+                </td>
+
+                <td class="py-4 text-slate-400 pl-4 text-xs max-w-xs md:max-w-md truncate hover:whitespace-normal transition-all">
+                  <%= log.reason %>
+                </td>
+
+              </tr>
+            <% }) %>
+
+          </tbody>
+        </table>
+
+        <div class="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
+          <p class="text-sm text-slate-400">
+            Menampilkan <span id="displayedCount" class="text-white font-medium">0</span> dari <span class="text-white font-medium"><%= logs.length %></span> total log
+          </p>
+          <div id="logPagination" class="flex items-center gap-2">
+            </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div> </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tableBody = document.getElementById("logTableBody");
+  const allRows = Array.from(document.querySelectorAll(".log-row"));
+  const searchInput = document.getElementById("logSearch");
+  const statusFilter = document.getElementById("statusFilter");
+  const paginationContainer = document.getElementById("logPagination");
+  const displayedCountLabel = document.getElementById("displayedCount");
+
+  const rowsPerPage = 20;
+  let currentPage = 1;
+  let filteredRows = [...allRows];
+
+  // Fungsi Filter Utama (Gabungan Search dan Dropdown Status)
+  function filterData() {
+    const searchQuery = searchInput.value.toLowerCase().trim();
+    const filterStatus = statusFilter.value;
+
+    filteredRows = allRows.filter(row => {
+      const matchSearch = row.getAttribute("data-search").includes(searchQuery);
+      const matchStatus = (filterStatus === "all") || (row.getAttribute("data-status") === filterStatus);
+      return matchSearch && matchStatus;
+    });
+
+    currentPage = 1; // Reset ke halaman pertama saat filter berubah
+    updateTableDisplay();
+  }
+
+  // Menampilkan Baris Berdasarkan Halaman yang Aktif
+  function updateTableDisplay() {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    // Sembunyikan semua baris terlebih dahulu
+    allRows.forEach(row => row.style.display = "none");
+
+    // Tampilkan baris yang masuk filter dan pagination saja
+    filteredRows.slice(start, end).forEach(row => row.style.display = "");
+
+    // Update Label Counter Angka
+    displayedCountLabel.textContent = filteredRows.length;
+
+    // Hapus pesan kosong jika sebelumnya ada
+    const existingNoData = document.querySelector(".temp-no-data");
+    if (existingNoData) existingNoData.remove();
+
+    // Jika hasil filter kosong, tampilkan pesan kosong sementara
+    if (filteredRows.length === 0) {
+      const noDataRow = document.createElement("tr");
+      noDataRow.className = "temp-no-data";
+      noDataRow.innerHTML = `
+        <td colspan="5" class="py-12 text-center text-slate-500">
+          <i class="fa-solid fa-magnifying-glass text-2xl mb-2 block text-slate-600"></i>
+          Tidak ada hasil log yang cocok dengan filter pencarian.
+        </td>
+      `;
+      tableBody.appendChild(noDataRow);
+    }
+
+    renderPaginationButtons();
+  }
+
+  // Membuat Desain Tombol Angka Halaman
+  function renderPaginationButtons() {
+    paginationContainer.innerHTML = "";
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+    if (totalPages <= 1) return;
+
+    // Tombol Back (‹)
+    const prevBtn = document.createElement("button");
+    prevBtn.innerHTML = "‹";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.className = "px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white disabled:opacity-40 transition disabled:cursor-not-allowed";
+    prevBtn.addEventListener("click", () => changePage(currentPage - 1));
+    paginationContainer.appendChild(prevBtn);
+
+    // Tombol Nomor Angka
+    for (let i = 1; i <= totalPages; i++) {
+      const pageBtn = document.createElement("button");
+      pageBtn.textContent = i;
+      if (i === currentPage) {
+        pageBtn.className = "px-3 py-1.5 rounded-xl bg-emerald-500 text-white font-semibold shadow-md shadow-emerald-500/20 transition";
+      } else {
+        pageBtn.className = "px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 transition";
+      }
+      pageBtn.addEventListener("click", () => changePage(i));
+      paginationContainer.appendChild(pageBtn);
+    }
+
+    // Tombol Next (›)
+    const nextBtn = document.createElement("button");
+    nextBtn.innerHTML = "›";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.className = "px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white disabled:opacity-40 transition disabled:cursor-not-allowed";
+    nextBtn.addEventListener("click", () => changePage(currentPage + 1));
+    paginationContainer.appendChild(nextBtn);
+  }
+
+  function changePage(page) {
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    updateTableDisplay();
+  }
+
+  // Event Listener saat user mengetik atau memilih opsi dropdown
+  searchInput.addEventListener("input", filterData);
+  statusFilter.addEventListener("change", filterData);
+
+  // Inisialisasi Pertama Kali Muat Halaman
+  updateTableDisplay();
+});
+</script>

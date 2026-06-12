@@ -16,10 +16,15 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import { User } from "../models/User.js";
+import { DeviceLog } from "../models/DeviceLog.js";
 import { fileURLToPath } from "url";
 import { getIO } from "./socket/io.js";
 import { handleLocationMessage } from "./handlers/messageHandler.js"; // sesuaikan path filenya
 import { handleAutoreplyMessage } from "./handlers/autoReplyHandler.js"; // sesuaikan path filenya
+import {
+  kirimNotifAdmin,
+  getDisconnectReason,
+} from "../helpers/whatsappNotif.js"; // Sesuaikan path-nya
 
 // 1. Import di bagian paling atas file utama
 import { handleAccountingMessage } from "./handlers/accountingHandler.js";
@@ -115,21 +120,144 @@ export async function initWA(userId) {
         ?.split(":")[0]
         ?.replace("@s.whatsapp.net", "");
 
+      // Ambil data user dari database untuk tahu username-nya di dalam pesannotif
+      const targetUser = await User.findById(userId);
+      const username = targetUser?.username || "Unknown User";
+
       await User.findByIdAndUpdate(userId, {
         waStatus: "connected",
         waNumber: phone,
       });
+
+      await DeviceLog.create({
+        userId: userId,
+        waNumber: phone,
+        status: "connected",
+        reason: "Sesi berhasil dibuka dan terhubung ke server.",
+      });
+
+      // 🎯 NOTIFIKASI: Admin mengabarkan bahwa ada user yang konek
+      const pesanNotifSukses = `📢 *LAPORAN GATEWAY: AKUN KONEK*\n\nHalo bos, menginfokan bahwa akun milik *${username}* (${phone}) telah *BERHASIL TERCONNECTED* ke server.`;
+      await kirimNotifAdmin(pesanNotifSukses);
     }
+
+    // if (connection === "close") {
+    //   const code = lastDisconnect?.error?.output?.statusCode;
+    //   console.log("WA disconnected:", userId, code);
+
+    //   await User.findByIdAndUpdate(userId, { waStatus: "disconnected" });
+    //   delete clients[userId];
+
+    //   const janganReconnect = [DisconnectReason.loggedOut, 401, 403, 408];
+
+    //   if (!janganReconnect.includes(code)) {
+    //     console.log(
+    //       `[RECONNECT] Mencoba menyambungkan kembali user ${userId} dalam 3 detik...`,
+    //     );
+    //     setTimeout(() => initWA(userId), 3000);
+    //   } else {
+    //     const sessionDir = path.join(
+    //       __dirname,
+    //       "../../sessions",
+    //       userId.toString(),
+    //     );
+    //     if (fs.existsSync(sessionDir)) {
+    //       fs.rmSync(sessionDir, { recursive: true, force: true });
+    //       console.log("Old session cleared for clean login:", userId);
+    //     }
+    //     io.to(`user-${userId}`).emit("logout", {
+    //       reason:
+    //         code === 401 ? "QR Scan Timeout / Invalid Session" : "Logged Out",
+    //     });
+    //   }
+    // }
+
+    // if (connection === "close") {
+    //   const code = lastDisconnect?.error?.output?.statusCode;
+    //   console.log("WA disconnected:", userId, code);
+
+    //   // 🎯 SEKARANG CUKUP PANGGIL FUNGSI INI:
+    //   const logReason = getDisconnectReason(code);
+
+    //   // 1. Update status utama user menjadi disconnected
+    //   const targetUser = await User.findById(userId);
+    //   const savedPhone = targetUser?.waNumber || currentPhone;
+
+    //   await User.findByIdAndUpdate(userId, { waStatus: "disconnected" });
+    //   delete clients[userId];
+
+    //   // 2. Catat sejarah disconnect beserta alasannya ke DeviceLog
+    //   await DeviceLog.create({
+    //     userId: userId,
+    //     waNumber: savedPhone,
+    //     status: "disconnected",
+    //     reason: logReason, // <-- Hasil string dari fungsi getDisconnectReason()
+    //   });
+
+    //   // 🎯 NOTIFIKASI: Admin mengabarkan bahwa ada user yang putus beserta alasannya
+    //   if (savedPhone && savedPhone !== "unknown") {
+    //     const pesanNotifGagal = `⚠️ *LAPORAN GATEWAY: AKUN PUTUS*\n\nHalo bos, peringatan bahwa akun milik *${username}* (${savedPhone}) telah *TERPUTUS* dari server.\n\n*Alasan:* ${logReason}`;
+    //     await kirimNotifAdmin(pesanNotifGagal);
+    //   }
+
+    //   // --- LOGIKA RECONNECT BAWAAN KAMU ---
+    //   const janganReconnect = [DisconnectReason.loggedOut, 401, 403, 408];
+    //   if (!janganReconnect.includes(code)) {
+    //     console.log(
+    //       `[RECONNECT] Mencoba menyambungkan kembali user ${userId} dalam 3 detik...`,
+    //     );
+    //     setTimeout(() => initWA(userId), 3000);
+    //   } else {
+    //     const sessionDir = path.join(
+    //       __dirname,
+    //       "../../sessions",
+    //       userId.toString(),
+    //     );
+    //     if (fs.existsSync(sessionDir)) {
+    //       fs.rmSync(sessionDir, { recursive: true, force: true });
+    //     }
+    //     io.to(`user-${userId}`).emit("logout", {
+    //       reason:
+    //         code === 401 ? "QR Scan Timeout / Invalid Session" : "Logged Out",
+    //     });
+    //   }
+    // }
 
     if (connection === "close") {
       const code = lastDisconnect?.error?.output?.statusCode;
       console.log("WA disconnected:", userId, code);
 
+      const logReason = getDisconnectReason(code);
+
+      // 1. Ambil data user dari database TERLEBIH DAHULU
+      const targetUser = await User.findById(userId);
+
+      // 2. Definisikan variabel savedPhone dan username dari data database di atas
+      const savedPhone = targetUser?.waNumber || currentPhone;
+      const username = targetUser?.username || "Unknown User"; // 🎯 Variabel username dibuat di sini
+
+      // 3. Update status utama user menjadi disconnected di database
       await User.findByIdAndUpdate(userId, { waStatus: "disconnected" });
+
+      // 4. Hapus session aktif dari memory RAM
       delete clients[userId];
 
-      const janganReconnect = [DisconnectReason.loggedOut, 401, 403, 408];
+      // 5. Catat sejarah disconnect beserta alasannya ke DeviceLog
+      await DeviceLog.create({
+        userId: userId,
+        waNumber: savedPhone,
+        status: "disconnected",
+        reason: logReason,
+      });
 
+      // 6. Kirim notifikasi via API Admin (Sekarang variabel username & savedPhone sudah pasti aman digunakan)
+      if (savedPhone && savedPhone !== "unknown") {
+        const pesanNotifGagal = `⚠️ *LAPORAN GATEWAY: AKUN PUTUS*\n\nHalo bos, peringatan bahwa akun milik *${username}* (${savedPhone}) telah *TERPUTUS* dari server.\n\n*Alasan:* ${logReason}`;
+        await kirimNotifAdmin(pesanNotifGagal);
+      }
+
+      // --- LOGIKA RECONNECT BAWAAN KAMU ---
+      const janganReconnect = [DisconnectReason.loggedOut, 401, 403, 408];
       if (!janganReconnect.includes(code)) {
         console.log(
           `[RECONNECT] Mencoba menyambungkan kembali user ${userId} dalam 3 detik...`,
@@ -143,7 +271,6 @@ export async function initWA(userId) {
         );
         if (fs.existsSync(sessionDir)) {
           fs.rmSync(sessionDir, { recursive: true, force: true });
-          console.log("Old session cleared for clean login:", userId);
         }
         io.to(`user-${userId}`).emit("logout", {
           reason:
@@ -157,17 +284,12 @@ export async function initWA(userId) {
     if (type !== "notify") return;
     const msg = messages[0];
 
-     
-
     console.log(JSON.stringify(msg.key, null, 2));
-
-    
 
     if (!msg.message || msg.key.fromMe) return;
 
     const from = msg.key.remoteJid;
 
-    
     const text =
       msg.message.conversation || msg.message.extendedTextMessage?.text || "";
     const messageType = Object.keys(msg.message)[0];

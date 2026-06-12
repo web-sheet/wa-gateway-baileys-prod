@@ -1,6 +1,6 @@
 
 #ada tambahan ternyata
 git add .
-git commit -m "perbaikan pesan absensi dari id menjadi nomor"
+git commit -m "penambahan notif koneksi"
 git push origin main
  

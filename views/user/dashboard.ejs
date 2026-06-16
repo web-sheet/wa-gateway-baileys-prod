@@ -92,7 +92,7 @@
             </div>
 
             <!-- Buttons -->
-            <div class="flex flex-col md:flex-row gap-4 mt-6">
+            <!-- <div class="flex flex-col md:flex-row gap-4 mt-6">
 
               <button id="connectWA"
                 <%= user.waStatus === 'connected' ? 'disabled' : '' %>
@@ -113,7 +113,35 @@
 
               </button>
 
-            </div>
+            </div> -->
+
+<div class="flex flex-col md:flex-row gap-4 mt-6">
+  
+  <button id="connectWA"
+    <%= user.waStatus === 'connected' ? 'disabled' : '' %>
+    class="flex-1 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 transition font-semibold">
+    <%= user.waStatus === 'connected' ? 'Sudah Terhubung' : 'Connect WhatsApp' %>
+  </button>
+
+  <button id="disconnectWA"
+    <%= user.waStatus !== 'connected' ? 'disabled' : '' %>
+    class="flex-1 py-3 rounded-2xl bg-red-500 hover:bg-red-600 disabled:opacity-50 transition font-semibold">
+    Logout WhatsApp
+  </button>
+
+
+    <button id="resetWA"
+    <%= user.waStatus === 'connected' ? 'disabled' : '' %>
+  class="flex-1 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 transition font-semibold text-white">
+    Reset Session
+  </button>
+
+  
+
+ 
+
+</div>
+
 
             <!-- Status -->
             <div id="status"
@@ -774,6 +802,7 @@
 
       const connectBtn = document.getElementById("connectWA");
       const disconnectBtn = document.getElementById("disconnectWA");
+      const resetBtn = document.getElementById("resetWA");
 
       const statusText = document.getElementById("status");
       const waStatusEl = document.getElementById("waStatus");
@@ -784,6 +813,7 @@
       connectBtn.onclick = async () => {
 
         connectBtn.disabled = true;
+           resetBtn.disabled = true;
 
         statusText.innerText = "Menunggu QR Code...";
 
@@ -841,6 +871,46 @@
 
           statusText.innerText =
             "Gagal disconnect";
+
+        }
+
+      };
+
+          // DISCONNECT
+      resetBtn.onclick = async () => {
+
+        if (!confirm("Hapus Session WhatsApp?"))
+          return;
+
+        resetBtn.disabled = true;
+
+        statusText.innerText =
+          "Menghapus Session...";
+
+        try {
+
+          const res = await fetch("/wa/disconnect", {
+            method: "POST"
+          });
+
+          const result = await res.json();
+
+          if (!result.success) {
+
+            alert(result.message);
+
+            resetBtn.disabled = false;
+
+          }
+
+        } catch (error) {
+
+          console.error(error);
+
+          resetBtn.disabled = false;
+
+          statusText.innerText =
+            "Gagal reset WA";
 
         }
 
@@ -924,7 +994,7 @@
       socket.on("logout", () => {
 
         statusText.innerText =
-          "WhatsApp Logged Out ❌";
+          "WhatsApp Logged Out/ Session Berhasil Dihapus";
 
         waStatusEl.innerText =
           "disconnected";
@@ -963,6 +1033,7 @@
           `;
 
         connectBtn.disabled = false;
+        resetBtn.disabled = false;
 
         connectBtn.innerText =
           "Connect WhatsApp";

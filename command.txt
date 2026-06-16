@@ -1,6 +1,19 @@
 
 #ada tambahan ternyata
 git add .
-git commit -m "penambahan notif koneksi 2"
+git commit -m "perbaikan sidebar"
 git push origin main
+
+
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    RewriteRule ^index\.html$ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.html [L]
+</IfModule>
  

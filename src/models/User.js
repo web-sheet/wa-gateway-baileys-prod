@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema(
 
     waStatus: {
       type: String,
-      enum: ["disconnected", "connecting", "connected"],
+      enum: ["disconnected", "connecting", "connected", "failed"],
       default: "disconnected",
     },
 

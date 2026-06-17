@@ -42,10 +42,14 @@
 
 </article>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+
 <style>
-  /* Menghias output elemen HTML di dalam artikel agar rapi menggunakan font global */
+  /* --- STYLING UTAMA ARTIKEL --- */
   .prose-custom h1, .prose-custom h2, .prose-custom h3 {
-    color: #f1f5f9; /* slate-200 */
+    color: #f1f5f9;
     font-weight: 700;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
@@ -53,35 +57,157 @@
   .prose-custom h1 { font-size: 1.5rem; }
   .prose-custom h2 { font-size: 1.3rem; border-left: 3px solid #10b981; padding-left: 8px; }
   .prose-custom h3 { font-size: 1.1rem; }
-  
-  .prose-custom p {
-    margin-bottom: 1rem;
-    color: #cbd5e1; /* slate-300 */
-  }
-  
-  .prose-custom ul, .prose-custom ol {
-    padding-left: 1.25rem;
-    margin-bottom: 1rem;
-    color: #cbd5e1;
-  }
+  .prose-custom p { margin-bottom: 1rem; color: #cbd5e1; }
+  .prose-custom ul, .prose-custom ol { padding-left: 1.25rem; margin-bottom: 1rem; color: #cbd5e1; }
   .prose-custom ul { list-style-type: disc; }
   .prose-custom ol { list-style-type: decimal; }
+  .prose-custom a { color: #34d399; text-decoration: underline; }
+  .prose-custom img { max-width: 100%; height: auto; border-radius: 0.75rem; border: 1px solid #334155; margin: 1.5rem auto; display: block; }
 
-  /* Style khusus untuk blok kode/script tutorial */
-  .prose-custom pre {
-    background-color: #0f172a; /* slate-900 */
-    padding: 1rem;
-    border-radius: 0.75rem;
-    overflow-x: auto;
-    font-family: monospace;
-    font-size: 0.85rem;
-    color: #34d399; /* emerald-400 */
-    border: 1px solid #334155;
-    margin: 1rem 0;
+  /* 🎯 UPDATE: Mengubah Latar Belakang Kode Menjadi Putih Bersih di Atas Tema Gelap */
+  .prose-custom pre, 
+  .prose-custom pre[class*="language-"],
+  .prose-custom .ql-code-block-container {
+    position: relative !important; 
+    background-color: #ffffff !important; /* Latar Belakang Putih Murni */
+    padding: 3.5rem 1.2rem 1.2rem 1.2rem !important; 
+    border-radius: 0.75rem !important;
+    border: 2px solid #cbd5e1 !important; /* Border abu-abu halus agar kontras terpisah dari background web */
+    margin: 1.5rem 0 !important;
+    overflow-x: auto !important;
+    white-space: pre !important;
   }
-  
-  .prose-custom a {
-    color: #34d399;
-    text-decoration: underline;
+
+  /* Memaksa font kode dan menghilangkan text-shadow default prism light */
+  .prose-custom pre code,
+  .prose-custom code[class*="language-"] {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    font-size: 0.85rem !important;
+    color: #0f172a !important; /* Teks default hitam gelap */
+    text-shadow: none !important; 
+    white-space: pre !important;
+    display: block !important;
+  }
+
+  /* 🎯 UPDATE DESAIN TOMBOL COPY: Diubah agar serasi berada di atas warna putih */
+  .btn-copy-code {
+    position: absolute !important;
+    top: 0.6rem !important;
+    right: 0.6rem !important;
+    background-color: #f1f5f9 !important; /* Abu-abu terang (slate-100) */
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;            /* Teks abu-abu gelap */
+    padding: 0.3rem 0.7rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    border-radius: 0.375rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    z-index: 50 !important;
+  }
+
+  .btn-copy-code:hover {
+    background-color: #059669 !important; /* Tetap hijau emerald sewaktu di-hover */
+    color: #ffffff !important;
+    border-color: transparent !important;
   }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectors = [
+      ".prose-custom pre", 
+      ".prose-custom .ql-syntax", 
+      ".prose-custom .ql-code-block-container"
+    ];
+    const codeBlocks = document.querySelectorAll(selectors.join(", "));
+
+    codeBlocks.forEach((block) => {
+      if (!block) return;
+
+      if (block.parentElement.closest('.ql-code-block-container') || block.parentElement.tagName === 'PRE') return;
+      if (block.querySelector('.btn-copy-code')) return;
+
+      block.style.setProperty("position", "relative", "important");
+
+      let structuredLines = [];
+      const lines = block.querySelectorAll('.ql-code-block, p, div');
+      
+      if (lines.length > 0) {
+        lines.forEach(line => {
+          let lineText = line.textContent;
+          let indentSpace = "";
+          
+          line.classList.forEach(className => {
+            if (className.startsWith('ql-indent-')) {
+              const level = parseInt(className.replace('ql-indent-', ''), 10);
+              if (!isNaN(level)) {
+                indentSpace = " ".repeat(level * 4);
+              }
+            }
+          });
+
+          structuredLines.push(indentSpace + lineText);
+        });
+      } else {
+        const rawLines = block.textContent.split(/\r?\n/);
+        rawLines.forEach(line => {
+          structuredLines.push(line);
+        });
+      }
+
+      let finalCleanText = structuredLines.join("\n");
+
+      if (!finalCleanText || finalCleanText.trim() === "Copy") return;
+
+      let language = "javascript"; 
+      if (finalCleanText.includes("<?php") || finalCleanText.includes("$this->") || finalCleanText.includes("public function")) {
+        language = "php";
+      } else if (finalCleanText.includes("<html>") || finalCleanText.includes("</div>") || finalCleanText.includes("class=")) {
+        language = "html";
+      }
+
+      const codeElement = document.createElement("code");
+      codeElement.className = `language-${language}`;
+      codeElement.textContent = finalCleanText;
+      
+      block.innerHTML = "";
+      block.appendChild(codeElement);
+
+      Prism.highlightElement(codeElement);
+
+      // --- PASANG TOMBOL COPY ---
+      const button = document.createElement("button");
+      button.className = "btn-copy-code";
+      button.type = "button";
+      button.innerHTML = `<i class="fa-regular fa-copy"></i> Copy`;
+      block.appendChild(button);
+
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(finalCleanText);
+          
+          button.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
+          button.style.setProperty("background-color", "#059669", "important");
+          button.style.setProperty("color", "#ffffff", "important");
+          button.style.setProperty("border-color", "transparent", "important");
+
+          setTimeout(() => {
+            button.innerHTML = `<i class="fa-regular fa-copy"></i> Copy`;
+            button.style.backgroundColor = "";
+            button.style.color = "";
+            button.style.borderColor = "";
+          }, 2000);
+        } catch (err) {
+          console.error("Gagal menyalin teks kode: ", err);
+        }
+      });
+    });
+  });
+</script>

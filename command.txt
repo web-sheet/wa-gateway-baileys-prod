@@ -1,7 +1,7 @@
 
 #ada tambahan ternyata
 git add .
-git commit -m "perbaikan sidebar"
+git commit -m "penambahan fitur blog"
 git push origin main
 
 

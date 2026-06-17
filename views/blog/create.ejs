@@ -160,23 +160,36 @@
   .ql-snow .ql-fill { fill: #94a3b8 !important; }
   .ql-snow .ql-picker { color: #94a3b8 !important; }
   .ql-editor.ql-blank::before { color: #64748b !important; font-style: normal !important; }
-  .ql-editor { color: #f1f5f9 !important; font-family: ui-sans-serif, system-ui, sans-serif; }
+  .ql-editor { color: #f1f5f9 !important; font-family: ui-sans-serif, system-ui, sans-serif; min-height: 280px; }
+  
+  /* Styling khusus tampilan kode di dalam text editor biar cakep */
+  .ql-editor pre.ql-syntax {
+    background-color: #1e293b !important;
+    color: #38bdf8 !important;
+    border-left: 4px solid #10b981 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  }
 </style>
 
 <script>
+  // Inisialisasi Quill Editor dengan Modul Lengkap (Gambar + Kode Blok)
   const quill = new Quill('#editor', {
     theme: 'snow',
-    placeholder: 'Tulis isi panduan berbobot Anda di sini...',
+    placeholder: 'Tulis isi tutorial berbobot Anda di sini... (Gunakan tombol gambar untuk upload screenshoot & ikon </> untuk menulis sintaks kode)',
     modules: {
       toolbar: [
-        ['bold', 'italic', 'underline'],
-        [{ 'header': [1, 2, false] }],
-        ['link', 'blockquote', 'code-block'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['link', 'blockquote', 'code-block', 'image'], // 🎯 AKTIFKAN FITUR 'image' & 'code-block' DI SINI
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['clean']
       ]
     }
   });
 
+  // Handler Kirim Form / Validasi Data sebelum Masuk DB
   const form = document.getElementById('blogForm');
   form.onsubmit = function() {
     const contentInput = document.getElementById('contentInput');
@@ -186,6 +199,9 @@
       alert('Isi konten artikel blog tidak boleh kosong!');
       return false;
     }
+    
+    // Oper semua HTML mentah (termasuk tag <pre> kode dan <img> base64) ke input hidden database
     contentInput.value = htmlContent;
   };
+</script>
 </script>

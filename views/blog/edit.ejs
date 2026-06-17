@@ -66,24 +66,46 @@
   .ql-snow .ql-stroke { stroke: #94a3b8 !important; }
   .ql-snow .ql-fill { fill: #94a3b8 !important; }
   .ql-snow .ql-picker { color: #94a3b8 !important; }
-  .ql-editor { color: #f1f5f9 !important; font-family: ui-sans-serif, system-ui, sans-serif; }
+  .ql-editor.ql-blank::before { color: #64748b !important; font-style: normal !important; }
+  .ql-editor { color: #f1f5f9 !important; font-family: ui-sans-serif, system-ui, sans-serif; min-height: 320px; }
+  
+  /* Styling visual tampilan kode di dalam text editor sewaktu mengedit */
+  .ql-editor pre.ql-syntax {
+    background-color: #1e293b !important;
+    color: #f59e0b !important; /* Menggunakan warna Amber menyelaraskan halaman edit */
+    border-left: 4px solid #f59e0b !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  }
+
+  /* Batasi gambar di dalam editor agar tidak merusak layout dashboard */
+  .ql-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid #334155;
+    margin: 8px 0;
+  }
 </style>
 
 <script>
-  // Inisialisasi Quill
+  // Inisialisasi Quill Editor dengan Modul Lengkap (Mendukung Gambar + Kode Blok)
   const quill = new Quill('#editor', {
     theme: 'snow',
+    placeholder: 'Perbarui isi panduan berbobot Anda di sini...',
     modules: {
       toolbar: [
-        ['bold', 'italic', 'underline'],
-        [{ 'header': [1, 2, false] }],
-        ['link', 'blockquote', 'code-block'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['link', 'blockquote', 'code-block', 'image'], // 🎯 COMPATIBILITY: Gambar dan Code-block aktif
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['clean']
       ]
     }
   });
 
-  // Salin HTML ke input tersembunyi saat disubmit
+  // Handler Kirim Form Perubahan Data
   const form = document.getElementById('blogForm');
   form.onsubmit = function() {
     const contentInput = document.getElementById('contentInput');
@@ -93,6 +115,8 @@
       alert('Isi konten artikel blog tidak boleh kosong!');
       return false;
     }
+    
+    // Oper semua HTML baru (termasuk tag <pre> dan Base64 string gambar baru jika ada) ke hidden input sebelum dikirim ke server rute /update
     contentInput.value = htmlContent;
   };
 </script>

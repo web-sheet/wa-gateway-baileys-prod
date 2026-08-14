@@ -22,7 +22,7 @@ import { getIO } from "./socket/io.js";
 import { handleLocationMessage } from "./handlers/messageHandler.js"; // sesuaikan path filenya
 import { handleAutoreplyMessage } from "./handlers/autoReplyHandler.js"; // sesuaikan path filenya
 import {
-  kirimNotifAdmin,
+  
   getDisconnectReason,
 } from "../helpers/whatsappNotif.js"; // Sesuaikan path-nya
 
@@ -143,7 +143,7 @@ export async function initWA(userId) {
 
       // 🎯 NOTIFIKASI: Admin mengabarkan bahwa ada user yang konek
       const pesanNotifSukses = `📢 *LAPORAN GATEWAY: AKUN KONEK*\n\nHalo bos, menginfokan bahwa akun milik *${username}* (${phone}) telah *BERHASIL TERCONNECTED* ke server.`;
-      await kirimNotifAdmin(pesanNotifSukses);
+      // await kirimNotifAdmin(pesanNotifSukses);
     }
 
     // if (connection === "close") {
@@ -229,7 +229,7 @@ export async function initWA(userId) {
       // 4. Notifikasi Admin
       if (savedPhone && savedPhone !== "unknown") {
         const pesanNotifGagal = `⚠️ *LAPORAN GATEWAY: AKUN PUTUS*\n\nHalo bos, peringatan bahwa akun milik *${username}* (${savedPhone}) telah *TERPUTUS* dari server.\n\n*Alasan:* ${logReason}`;
-        await kirimNotifAdmin(pesanNotifGagal);
+        // await kirimNotifAdmin(pesanNotifGagal);
       }
 
       // 5. LOGIKA RECONNECT DENGAN EXPONENTIAL BACKOFF
@@ -247,7 +247,7 @@ export async function initWA(userId) {
           // TAMBAHKAN INI:
           await User.findByIdAndUpdate(userId, { waStatus: "failed" });
 
-          await kirimNotifAdmin(`🚨 *DARURAT GATEWAY*...`);
+          // await kirimNotifAdmin(`🚨 *DARURAT GATEWAY*...`);
           return;
         }
 
